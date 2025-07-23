@@ -2,26 +2,37 @@ const express = require("express");
 const path = require("path");
 const User = require("../model/user");
 const router = express.Router();
-const {upload} = require("../utils/ErrorHandler");
+const upload = require("../multer"); 
 const ErrorHandler = require("../utils/ErrorHandler");
 
-router.post("/create-user", upload.single("file"), async(req,res,next) =>{
-    const {name,email,password} = req.body;
-    const userEmail = await User.findOne({email})
+router.post("/create-user", upload.single("file"), async (req, res, next) => {
+  try {
+    const { name, email, password } = req.body;
 
-    if(userEmail){
-        return next(new ErrorHandler("User Already exists", 400))
-    }
-const filename = req.file.filename;
-const fileUrl = path.join(filename);
-    const user = {
-        name:name,
-        email:email,
-        password:password,
-        avatar: fileUrl,
+    const userEmail = await User.findOne({ email });
+    if (userEmail) {
+      return next(new ErrorHandler("User Already exists", 400));
     }
 
-    console.log(user);
-})
+    const filename = req.file.filename;
+    const fileUrl = path.join("uploads", filename);
+
+    const user = await User.create({
+      name,
+      email,
+      password,
+      avatar: fileUrl,
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "User created successfully",
+      user,
+    });
+  } catch (error) {
+    return next(new ErrorHandler(error.message, 500));
+  }
+});
+
 
 module.exports=router;

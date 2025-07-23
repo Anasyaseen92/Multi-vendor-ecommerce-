@@ -4,6 +4,7 @@ import styles from "../../styles/styles.js"
 import {RxAvatar} from 'react-icons/rx'
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { server } from '../../../server.js';
 function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -16,7 +17,7 @@ function Signup() {
     const file = e.target.files[0];
     setAvatar(file);
   }
-  const handleSubmit =() =>{
+  const handleSubmit =(e) =>{
     e.preventDefault();
    const config = {headers: {"Content-Type":"multipart/form-data"}}
 
