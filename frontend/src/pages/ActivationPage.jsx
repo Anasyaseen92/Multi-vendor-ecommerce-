@@ -18,8 +18,10 @@ function ActivationPage() {
                     console.log("Success:", res.data.message);
                     setSuccess(true);
                 } catch (error) {
-                    console.error("Error:", error?.response?.data?.message || error.message);
-                    setError(true);
+                    const errMsg = error?.response?.data?.message || "Activation failed";
+  alert(errMsg); // ✅ Show proper error
+  console.error("Error:", errMsg);
+  setError(true);
                 }
             };
             activationEmail();
