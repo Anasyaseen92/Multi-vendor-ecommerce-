@@ -1,12 +1,31 @@
 import React from "react";
+import styles from "../../styles/styles";
+import EventCard from "./EventCard";
+
+// ✅ Dummy data with image URL
+const sampleEvent = {
+  name: "Tech Code Fest 2025",
+  description: "Join the biggest tech festival of the year.",
+  images: [
+    {
+      url: "https://via.placeholder.com/400x250.png?text=Tech+Event"
+    }
+  ],
+  originalPrice: 100,
+  discountPrice: 60,
+  start_Date: new Date().toISOString()
+};
 
 function Events() {
   return (
-    <div>
-      <div className={`${styles.section}`}>
-        <div className={`${styles.heading}`}>
-          <h1>Featured Products</h1>
-        </div>
+    <div className={`${styles.section}`}>
+      <div className={`${styles.heading}`}>
+        <h1>Popular Events</h1>
+      </div>
+
+      <div className="w-full grid">
+        {/* ✅ Pass both 'data' and 'active' props */}
+        <EventCard data={sampleEvent} active={true} />
       </div>
     </div>
   );
