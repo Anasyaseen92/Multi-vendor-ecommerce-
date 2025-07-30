@@ -2,7 +2,7 @@ import React from "react";
 import styles from "../../styles/styles";
 import EventCard from "./EventCard";
 
-// ✅ Dummy data with image URL
+// ✅ Dummy data with Finish_Date added
 const sampleEvent = {
   name: "Tech Code Fest 2025",
   description: "Join the biggest tech festival of the year.",
@@ -13,7 +13,8 @@ const sampleEvent = {
   ],
   originalPrice: 100,
   discountPrice: 60,
-  start_Date: new Date().toISOString()
+  start_Date: new Date().toISOString(),
+  Finish_Date: new Date(new Date().getTime() + 5 * 24 * 60 * 60 * 1000).toISOString() // ✅ 5 days from now
 };
 
 function Events() {

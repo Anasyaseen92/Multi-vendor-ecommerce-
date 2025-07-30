@@ -20,13 +20,11 @@ const EventCard = ({ active, data }) => {
     >
       <div className="w-full mr-4 lg:w-[50%] m-auto">
         <img
-          src={
-            data?.images?.[0]?.url ||
-            "https://via.placeholder.com/300x200.png?text=No+Image"
-          }
-          alt={data?.name || "Event Image"}
-          className="rounded-lg w-full h-[200px] object-cover"
-        />
+  src="https://placehold.co/400x250?text=Tech+Event"
+  alt="Event Banner"
+  className="w-full h-[200px] object-cover"
+/>
+
       </div>
 
       <div className="w-full lg:w-[50%] flex flex-col justify-center">
