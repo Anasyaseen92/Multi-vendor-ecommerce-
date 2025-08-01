@@ -1,27 +1,35 @@
 import { useEffect } from 'react';
 import './App.css'
-import {LoginPage , SignupPage,HomePage ,ActivationPage, ProductsPage} from './Routes.jsx'
+import {LoginPage , SignupPage,HomePage ,ActivationPage, ProductsPage,BestSellingPage, EventsPage,FAQPage} from './Routes.jsx'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { ToastContainer} from 'react-toastify';
 import Store from './redux/store.js'; // default import matches the default export // ✅ named import
 import { loadUser } from './redux/actions/user.js'; // ✅ Correct
+import { useSelector } from 'react-redux';
 
 
 
 
 function App() {
+  const { loading} = useSelector((state) => state.user);
 
   useEffect(()=>{
    Store.dispatch(loadUser());
   }, []);
   return (
-    <BrowserRouter>
+   <>
+   {
+    loading ? (null):(
+       <BrowserRouter>
     <Routes>
       <Route path='/' element={<HomePage/>}/> 
       <Route path='/login' element={<LoginPage/>}/> 
       <Route path='/sign-up' element={<SignupPage/>}/> 
       <Route path='/activation/:activation_token' element={<ActivationPage/>}/> 
       <Route path='/products' element={<ProductsPage/>}/>
+      <Route path='/best-selling' element={<BestSellingPage/>}/>
+      <Route path='/events' element={<EventsPage/>}/>
+      <Route path='/faq' element={<FAQPage/>}/>
     </Routes>
 
 
@@ -38,6 +46,9 @@ function App() {
         theme="dark"
       />
     </BrowserRouter>
+    )
+   }
+   </>
   )
 }
 

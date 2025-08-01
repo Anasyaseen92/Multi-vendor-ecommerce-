@@ -12,7 +12,16 @@ import { productData } from "../../static/data";
 import Navbar from "./Navbar";
 import styles from "../../styles/styles";
 import { CgProfile } from "react-icons/cg";
+import { useSelector } from "react-redux";
+import { backend_url } from "../../../server";
 const Header = ({ activeHeading }) => {
+
+  const {isAuthenticated,user} = useSelector((state) => state.user);
+  console.log("Avatar value:", user?.avatar);
+console.log("Final image URL:", `${backend_url}${user?.avatar?.replace(/\\/g, "/")}`);
+
+
+
   const [searchTerm, setSearchTerm] = useState("");
   const [searchData, setSearchData] = useState([]);
   const [active, setActive] = useState(false);
@@ -152,9 +161,22 @@ const Header = ({ activeHeading }) => {
             {/* */}
             <div className={`${styles.normalFlex}`}>
               <div className="relative cursor-pointer mr-[15px]">
-                <Link to={"/login"}>
-                  <CgProfile size={30} color="rgb(255 255 255 / 83%)" />
-                </Link>
+             {isAuthenticated && user?.avatar ? (
+  <Link to="/profile">
+    <img
+  src={encodeURI(`${backend_url}/${user.avatar.replace(/\\/g, "/")}`)}
+  className="w-[35px] h-[35px] rounded-full object-cover"
+  alt="User Avatar"
+/>
+
+  </Link>
+) : (
+  <Link to={isAuthenticated ? "/profile" : "/login"}>
+    <CgProfile size={30} color="rgb(255 255 255 / 83%)" />
+  </Link>
+)}
+
+
               </div>
             </div>
           </div>

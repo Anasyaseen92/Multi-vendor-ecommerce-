@@ -1,29 +1,22 @@
 import React,{useEffect, useState} from 'react'
 import Header from '../components/Layout/Header';
 import styles from '../styles/styles';
-import { useSearchParams } from 'react-router-dom';
 import { productData } from '../static/data';
 import ProductCard from '../components/Route/ProductCard/ProductCard';
 
 
-function ProductsPage() {
+function BestSellingPage() {
     const [data, setData] = useState([]);
-    const [searchParams] = useSearchParams();
-    const categoryData = searchParams.get("category");
+
   
   useEffect(()=>{
-    if(categoryData === null){
-        const d = productData && productData.sort((a,b) => a.total_sell - b.total_sell);
-        setData(d);
-    }
-    else{
-        const d = productData && productData.filter((i) => i.category === categoryData);
-        setData(d);
-    }
-  },[categoryData]);
+   const d = productData && productData.sort((a,b) => b.total_sell - a.total_sell)
+   setData(d);
+   window.scrollTo(0,0);
+  },[]);
     return (
     <div>
-        <Header activeHeading={3}/>
+        <Header activeHeading={2}/>
         <br/>
         <br/>
         <div className={`${styles.section}`}>
@@ -44,4 +37,4 @@ function ProductsPage() {
   )
 }
 
-export default ProductsPage
+export default BestSellingPage
