@@ -15,12 +15,12 @@ import { CgProfile } from "react-icons/cg";
 import { useSelector } from "react-redux";
 import { backend_url } from "../../../server";
 const Header = ({ activeHeading }) => {
-
-  const {isAuthenticated,user} = useSelector((state) => state.user);
+  const { isAuthenticated, user } = useSelector((state) => state.user);
   console.log("Avatar value:", user?.avatar);
-console.log("Final image URL:", `${backend_url}${user?.avatar?.replace(/\\/g, "/")}`);
-
-
+  console.log(
+    "Final image URL:",
+    `${backend_url}${user?.avatar?.replace(/\\/g, "/")}`
+  );
 
   const [searchTerm, setSearchTerm] = useState("");
   const [searchData, setSearchData] = useState([]);
@@ -142,8 +142,6 @@ console.log("Final image URL:", `${backend_url}${user?.avatar?.replace(/\\/g, "/
               </div>
             </div>
 
-            
-
             {/* */}
             <div className={`${styles.normalFlex}`}>
               <div className="relative cursor-pointer mr-[15px]">
@@ -157,28 +155,26 @@ console.log("Final image URL:", `${backend_url}${user?.avatar?.replace(/\\/g, "/
               </div>
             </div>
 
-
             {/* */}
-            <div className={`${styles.normalFlex}`}>
-              <div className="relative cursor-pointer mr-[15px]">
-             {isAuthenticated && user?.avatar ? (
-  <Link to="/profile">
-    <img
-  src={encodeURI(`${backend_url}/${user.avatar.replace(/\\/g, "/")}`)}
-  className="w-[35px] h-[35px] rounded-full object-cover"
-  alt="User Avatar"
-/>
-
-  </Link>
-) : (
-  <Link to={isAuthenticated ? "/profile" : "/login"}>
-    <CgProfile size={30} color="rgb(255 255 255 / 83%)" />
-  </Link>
-)}
-
-
+             
+              <div className={styles.noramlFlex}>
+                <div className="relative cursor-pointer mr-[15px]">
+                  {isAuthenticated ? (
+                    <Link to="/profile">
+                      <img
+                        className="rounded-full w-[35px] h-[35px]"
+                        src={`${backend_url}/${user.avatar}`}
+                        alt=""
+                      />
+                    </Link>
+                  ) : (
+                    <Link to="/login">
+                      <CgProfile color="rgb(255 255 255 /83%)" size={30} />
+                    </Link>
+                  )}
+                </div>
               </div>
-            </div>
+
           </div>
         </div>
       </div>

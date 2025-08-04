@@ -1,7 +1,6 @@
-import React from 'react';
-import { productData } from '../../../static/data';
-import ProductCard from '../ProductCard/ProductCard';
-import styles from '../../../styles/styles';
+import { productData } from "../../../static/data";
+import ProductCard from "../ProductCard/ProductCard";
+import styles from "../../../styles/styles";
 
 function FeaturedProduct() {
   return (

@@ -1,50 +1,53 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { useParams } from "react-router-dom";
 import { server } from "../../server";
 
 function ActivationPage() {
-    const { activation_token } = useParams();
-    const [error, setError] = useState(false);
-    const [success, setSuccess] = useState(false);
+  const { activation_token } = useParams();
+  const [status, setStatus] = useState("idle"); // 'idle' | 'loading' | 'success' | 'error'
 
-    useEffect(() => {
-        if (activation_token) {
-            const activationEmail = async () => {
-                try {
-                    const res = await axios.post(`${server}/user/activation`, {
-                        activation_token,
-                    });
-                    console.log("Success:", res.data.message);
-                    setSuccess(true);
-                } catch (error) {
-                    const errMsg = error?.response?.data?.message || "Activation failed";
-  alert(errMsg); // ✅ Show proper error
-  console.error("Error:", errMsg);
-  setError(true);
-                }
-            };
-            activationEmail();
-        }
-    }, [activation_token]);
+  const activateEmail = async () => {
+    setStatus("loading");
+    try {
+      const res = await axios.post(
+        `${server}/user/activation`,
+        { activation_token },
+        { headers: { "Content-Type": "application/json" } }
+      );
+      setStatus("success");
+    } catch (e) {
+      console.log("Full error:", e.response?.data || e.message);
 
-    return (
-        <div style={{
-            width: "100%",
-            height: "100vh",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center"
-        }}>
-            {error ? (
-                <p>Your token is expired</p>
-            ) : success ? (
-                <p>Your account has been created successfully</p>
-            ) : (
-                <p>Activating your account...</p>
-            )}
-        </div>
-    );
+      setStatus("error");
+    }
+  };
+
+  return (
+    <div className="w-full h-screen flex flex-col items-center justify-center gap-4 px-4 text-center">
+      {status === "success" && (
+        <p className="text-green-600 text-lg font-semibold">
+          🎉 Your account has been successfully created!
+        </p>
+      )}
+
+      {status === "error" && (
+        <p className="text-red-600 text-lg font-semibold">
+          ❌ Your activation token is expired or invalid.
+        </p>
+      )}
+
+      <button
+        onClick={activateEmail}
+        disabled={status === "loading" || status === "success"}
+        className={`${
+          status === "success" ? "bg-gray-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-500"
+        } text-white py-2 px-6 rounded font-semibold transition-all duration-200`}
+      >
+        {status === "loading" ? "Verifying..." : "Verify your account"}
+      </button>
+    </div>
+  );
 }
 
 export default ActivationPage;

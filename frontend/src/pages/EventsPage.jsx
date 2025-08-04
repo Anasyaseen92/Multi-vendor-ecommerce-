@@ -6,9 +6,8 @@ function EventsPage() {
   return (
     <div>
       <Header activeHeading={4} />
-      {productData.slice(0, 2).map((item, index) => (
-        <EventCard key={index} active={true} data={item} />
-      ))}
+      <EventCard active={true}/>
+      <EventCard active={true}/>
     </div>
   );
 }

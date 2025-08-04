@@ -1,35 +1,27 @@
 import React from "react";
-import styles from "../../styles/styles";
-import EventCard from "./EventCard";
+import EventCard from "./EventCard.jsx";
 
-// ✅ Dummy data with Finish_Date added
-const sampleEvent = {
-  name: "Tech Code Fest 2025",
-  description: "Join the biggest tech festival of the year.",
-  images: [
-    {
-      url: "https://via.placeholder.com/400x250.png?text=Tech+Event"
-    }
-  ],
-  originalPrice: 100,
-  discountPrice: 60,
-  start_Date: new Date().toISOString(),
-  Finish_Date: new Date(new Date().getTime() + 5 * 24 * 60 * 60 * 1000).toISOString() // ✅ 5 days from now
-};
+import styles from "../../styles/styles.js";
+import { useSelector } from "react-redux";
 
-function Events() {
+const Events = ({data}) => {
+ // const { allEvents, isLoading } = useSelector((state) => state.events);
+
   return (
-    <div className={`${styles.section}`}>
-      <div className={`${styles.heading}`}>
-        <h1>Popular Events</h1>
-      </div>
+    <div>
+     
+        <div className={`${styles.section}`}>
+          <div className={`${styles.heading}`}>
+            <h1>Popular Events</h1>
+          </div>
 
-      <div className="w-full grid">
-        {/* ✅ Pass both 'data' and 'active' props */}
-        <EventCard data={sampleEvent} active={true} />
-      </div>
+          <div className="w-full grid">
+            <EventCard data={true} />
+          </div>
+        </div> 
+      
     </div>
   );
-}
+};
 
 export default Events;
