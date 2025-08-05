@@ -20,7 +20,7 @@ const handleSubmit = async (e) => {
     },{withCredentials:true});
     toast.success("Login success!");
     navigate("/");
-    window.location.reload();
+    window.location.reload(true);
   } catch (err) {
     console.error("Login error:", err.response?.data); // 👈 log it!
     toast.error(err.response?.data?.message || "Login failed");
