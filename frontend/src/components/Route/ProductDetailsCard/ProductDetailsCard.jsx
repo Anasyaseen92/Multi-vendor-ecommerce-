@@ -82,7 +82,7 @@ const ProductDetailsCard = ({ setOpen, data }) => {
                     </h3>
                   )}
                 </div>
-
+{/* hello */}
                 <div className="flex items-center mt-12 justify-between pr-3">
                   {/* Quantity Buttons */}
                   <div>
