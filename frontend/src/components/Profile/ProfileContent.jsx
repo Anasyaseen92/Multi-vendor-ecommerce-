@@ -1,5 +1,5 @@
 
-import { AiOutlineArrowRight, AiOutlineCamera } from "react-icons/ai";
+import { AiOutlineArrowRight, AiOutlineCamera, AiOutlineDelete } from "react-icons/ai";
 import { backend_url } from "../../../server";
 import { useSelector } from "react-redux";
 import styles from "../../styles/styles";
@@ -7,6 +7,7 @@ import { useState } from "react";
 import { Button } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { Link } from "react-router-dom";
+import { MdTrackChanges } from "react-icons/md";
 function ProfileContent({active,setActive}) {
 
   const {user} = useSelector((state) => state.user);
@@ -43,12 +44,12 @@ function ProfileContent({active,setActive}) {
          
         <div className="w-full px-5">
             <form onSubmit={handleSubmit} aria-required={true}>
-              <div className="w-full flex pb-3">
-                <div className="w-[50%]">
+              <div className="w-full 800px:block flex  pb-3">
+                <div className="w-[50%] 800px:w-[50%]">
                  <label className="block pb-2">Full Name</label>
                  <input
                  type="text"
-                 className={`${styles.input} !w-[95%]`}
+                 className={`${styles.input} !w-[95%] `}
                  required
                  value={name}
                  onChange={(e) => setName(e.target.value)}
@@ -57,11 +58,11 @@ function ProfileContent({active,setActive}) {
 
                 {/* Email */}
 
-                 <div className="w-[50%]">
+                 <div className="w-[50%] 800px:w-[100%]">
                  <label className="block pb-2">Email Address</label>
                  <input
                  type="text"
-                 className={`${styles.input} !w-[95%]`}
+                 className={`${styles.input} !w-[95%] `}
                  required
                  value={email}
                  onChange={(e) => setEmail(e.target.value)}
@@ -71,16 +72,16 @@ function ProfileContent({active,setActive}) {
 
               {/* 2nd hai boss */}
 
-              <div className="w-full flex pb-3">
+              <div className="w-full flex 800px:block pb-3">
                 
 
                 {/* Phone Number */}
 
-                 <div className="w-[50%]">
+                 <div className="w-[100%] 800px:w-[50%]">
                  <label className="block pb-2">Phone Number</label>
                  <input
                  type="number"
-                 className={`${styles.input} !w-[95%]`}
+                 className={`${styles.input} !w-[95%] `}
                  required
                  value={phone}
                  onChange={(e) => setPhoneNumber(e.target.value)}
@@ -89,7 +90,7 @@ function ProfileContent({active,setActive}) {
                
                {/* Zip Code */}
 
-                <div className="w-[50%]">
+                <div className="w-[100%] 800px:w-[50%]">
                  <label className="block pb-2">Zip Code</label>
                  <input
                  type="number"
@@ -105,12 +106,12 @@ function ProfileContent({active,setActive}) {
 
               {/* 3rd hai boss */}
 
-              <div className="w-full flex pb-3">
+              <div className="w-full flex 800px:block pb-3">
                 
 
                 {/* Phone Number */}
 
-                 <div className="w-[50%]">
+                 <div className="w-[100%] 800px:w-[50%]">
                  <label className="block pb-2">Address 1</label>
                  <input
                  type="text"
@@ -123,7 +124,7 @@ function ProfileContent({active,setActive}) {
                
                {/* Zip Code */}
 
-                <div className="w-[50%]">
+                <div className="w-[100%] 800px:w-[50%]">
                  <label className="block pb-2">Address 2</label>
                  <input
                  type="text"
@@ -158,6 +159,60 @@ function ProfileContent({active,setActive}) {
             </div>
         )
       }
+      {/* Refunds */}
+
+       {
+        active === 3 && (
+          <div 
+       
+          onClick={() => setActive(3)}
+          
+          >
+            <AllRefundOrders/>
+            </div>
+        )
+      }
+      {/* Track order page */}
+
+       {
+        active === 5 && (
+          <div 
+       
+          onClick={() => setActive(5)}
+          
+          >
+            <TrackOrder/>
+            </div>
+        )
+      }
+      {/* Payment method page */}
+
+       {
+        active === 6 && (
+          <div 
+       
+          onClick={() => setActive(6)}
+          
+          >
+            <PaymentMethod/>
+            </div>
+        )
+      }
+
+      {/* Address page */}
+
+       {
+        active === 7 && (
+          <div 
+       
+          onClick={() => setActive(7)}
+          
+          >
+            <Address/>
+            </div>
+        )
+      }
+
 
     </div>
   );
@@ -246,6 +301,249 @@ const AllOrders = () =>{
      disableSelectionOnClick
      autoHeight
      />
+    </div>
+  )
+}
+const AllRefundOrders = () =>{
+ const orders = [
+    {
+      _id: "7463hvbbfhrtr28820221",
+      orderItems: [
+        {
+          name: "Iphone 14 pro max"
+        }
+      ],
+      totalPrice:120,
+      orderStatus: "Processing"
+    }
+  ]
+  const columns = [
+    { field: "id", headerName: "Order ID", minWidth: 150, flex: 0.7 },
+
+    {
+      field: "status",
+      headerName: "Status",
+      minWidth: 130,
+      flex: 0.7,
+      cellClassName: (params) => {
+        return params.value === "Delivered" ? "greenColor" : "redColor";
+      },
+    },
+    {
+      field: "itemsQty",
+      headerName: "Items Qty",
+      type: "number",
+      minWidth: 130,
+      flex: 0.7,
+    },
+
+    {
+      field: "total",
+      headerName: "Total",
+      type: "number",
+      minWidth: 130,
+      flex: 0.8,
+    },
+
+    {
+      field: " ",
+      flex: 1,
+      minWidth: 150,
+      headerName: "",
+      type: "number",
+      sortable: false,
+      renderCell: (params) => {
+        return (
+          <>
+            <Link to={`/user/order/${params.id}`}>
+              <Button>
+                <AiOutlineArrowRight size={20} />
+              </Button>
+            </Link>
+          </>
+        );
+      },
+    },
+  ]
+  const row = [];
+
+  orders &&
+    orders.forEach((item) => {
+      row.push({
+        id: item._id,
+        
+        itemsQty: item.orderItems.length,
+
+        total: "US$ " + item.totalPrice,
+        status: item.status,
+      });
+    });
+
+    return (
+      <div className="pl-8 pt-1">
+        <DataGrid
+        rows={row}
+        columns={columns}
+        pageSize={10}
+        autoHeight
+        disableSelectionOnClick
+        />
+      </div>
+    )
+
+}
+const TrackOrder = () =>{
+   const orders = [
+    {
+      _id: "7463hvbbfhrtr28820221",
+      orderItems: [
+        {
+          name: "Iphone 14 pro max"
+        }
+      ],
+      totalPrice:120,
+      orderStatus: "Processing"
+    }
+  ]
+  const columns = [
+    { field: "id", headerName: "Order ID", minWidth: 150, flex: 0.7 },
+
+    {
+      field: "status",
+      headerName: "Status",
+      minWidth: 130,
+      flex: 0.7,
+      cellClassName: (params) => {
+        return params.value === "Delivered" ? "greenColor" : "redColor";
+      },
+    },
+    {
+      field: "itemsQty",
+      headerName: "Items Qty",
+      type: "number",
+      minWidth: 130,
+      flex: 0.7,
+    },
+
+    {
+      field: "total",
+      headerName: "Total",
+      type: "number",
+      minWidth: 130,
+      flex: 0.8,
+    },
+
+    {
+      field: " ",
+      flex: 1,
+      minWidth: 150,
+      headerName: "",
+      type: "number",
+      sortable: false,
+      renderCell: (params) => {
+        return (
+          <>
+            <Link to={`/user/track/order/${params.id}`}>
+              <Button>
+                <MdTrackChanges size={20} />
+              </Button>
+            </Link>
+          </>
+        );
+      },
+    },
+  ];
+
+  const row = [];
+
+  orders &&
+    orders.forEach((item) => {
+      row.push({
+        id: item._id,
+      
+        itemsQty: item.orderItems.length,
+        total: "US$ " + item.totalPrice,
+        status: item.status,
+      });
+    });
+  return(
+ <div className="pl-8 pt-1">
+      <DataGrid
+        rows={row}
+        columns={columns}
+        autoHeight
+        disableRowSelectionOnClick
+        pageSize={10}
+      />
+    </div>
+  )
+}
+
+const PaymentMethod = () =>{
+  return (
+    <div className="w-full px-5">
+      <div className="flex w-full items-center justify-between">
+        <h1
+        className="text-[25px] font-[600] text-[#000000ba] pb-2"
+        >
+Payment Methods
+        </h1>
+        <div className={`${styles.button} !rounded-md`}>
+          <span className="text-[#fff]">Add New</span>
+        </div>
+      </div>
+      <br/>
+      <div
+      className="w-full bg-white h-[70px] rounded-[4px] flex items-center px-3 shadow justify-between pr-10"
+      >
+        <div className="flex items-center">
+          <img
+          src="https://bonik-react.vercel.app/assets/images/payment-methods/Visa.svg"
+          alt=""
+          />
+          <h5 className="pl-5 font-[600]">Anas Yaseen</h5>
+        </div>
+<div className="pl-8 flex items-center">
+ <h6>1234 **** *** ****</h6>
+ <h5 className="pl-6">08/2026</h5>
+</div>
+<div className="min-w-[10%] flex items-center justify-between pl-8">
+  <AiOutlineDelete size={25} className="cursor-pointer"/>
+</div>
+      </div>
+    </div>
+  )
+}
+const Address = () =>{
+  return (
+    <div className="w-full px-5">
+      <div className="flex w-full items-center justify-between">
+        <h1
+        className="text-[25px] font-[600] text-[#000000ba] pb-2"
+        >
+My Address
+        </h1>
+        <div className={`${styles.button} !rounded-md`}>
+          <span className="text-[#fff]">Add New</span>
+        </div>
+      </div>
+      <br/>
+      <div
+      className="w-full bg-white h-[70px] rounded-[4px] flex items-center px-3 shadow justify-between pr-10"
+      >
+        <div className="flex items-center">
+          <h5 className="pl-5 font-[600]">Default</h5>
+        </div>
+<div className="pl-8 flex items-center">
+ <h6> Township market , township,lahore,</h6>
+</div>
+<div className="pl-8 flex items-center">
+ <h6>0340-45--88</h6>
+</div>
+<div className="min-w-[10%] flex items-center justify-between pl-8">
+  <AiOutlineDelete size={25} className="cursor-pointer"/>
+</div>
+      </div>
     </div>
   )
 }
