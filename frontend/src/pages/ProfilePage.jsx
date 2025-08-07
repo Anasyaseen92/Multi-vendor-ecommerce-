@@ -12,7 +12,7 @@ function ProfilePage() {
             <div className='w-[335px]'>
                 <ProfileSidebar active={active} setActive={setActive}/>
             </div>
-            <ProfileContent active={active}/>
+            <ProfileContent active={active} setActive={setActive}/>
         </div>
     </div>
   )

@@ -5,8 +5,8 @@ import { RxPerson } from 'react-icons/rx';
 import { useNavigate } from 'react-router-dom'
 import {TbAddressBook} from "react-icons/tb"
 import {MdOutlineTrackChanges} from "react-icons/md"
-function ProfileSidebar() {
-    const [active,setActive] = useState(1);
+function ProfileSidebar({active,setActive}) {
+   // const [active,setActive] = useState(1);
     const navigate = useNavigate();
   return (
     <div

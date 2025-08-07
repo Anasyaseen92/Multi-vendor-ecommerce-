@@ -1,11 +1,14 @@
 
-import { AiOutlineCamera } from "react-icons/ai";
+import { AiOutlineArrowRight, AiOutlineCamera } from "react-icons/ai";
 import { backend_url } from "../../../server";
 import { useSelector } from "react-redux";
 import styles from "../../styles/styles";
 import { useState } from "react";
-function ProfileContent() {
-  const [active , setActive] = useState(1);
+import { Button } from "@mui/material";
+import { DataGrid } from "@mui/x-data-grid";
+import { Link } from "react-router-dom";
+function ProfileContent({active,setActive}) {
+
   const {user} = useSelector((state) => state.user);
   const [name , setName] = useState(user && user.name);
   const [email , setEmail] = useState(user && user.email); 
@@ -14,14 +17,17 @@ function ProfileContent() {
   const [address1 , setAddress1] = useState("");
   const [address2 , setAddress2] = useState("");
 
-  const handleSubmit = () =>{
-    e.prevent();
+  const handleSubmit = (e) =>{
+    e.preventDefault();
   }
   return (
     <div className="w-full min-h-screen">
       {active === 1 && (
         <>
-        <div className="flex justify-center w-full">
+        <div className="flex justify-center w-full"
+        
+          onClick={() => setActive(1)}
+        >
           <div className="relative">
             <img
               className="rounded-full w-[150px] h-[150px] object-cover border-[3px] border-blue-700"
@@ -140,8 +146,108 @@ function ProfileContent() {
           </div>  
         </>
       )}
+      {/*Orders*/}
+      {
+        active === 2 && (
+          <div 
+       
+          onClick={() => setActive(2)}
+          
+          >
+            <AllOrders/>
+            </div>
+        )
+      }
+
     </div>
   );
+}
+const AllOrders = () =>{
+  const orders = [
+    {
+      _id: "7463hvbbfhrtr28820221",
+      orderItems: [
+        {
+          name: "Iphone 14 pro max"
+        }
+      ],
+      totalPrice:120,
+      orderStatus: "Processing"
+    }
+  ]
+  const columns = [
+    { field: "id", headerName: "Order ID", minWidth: 150, flex: 0.7 },
+
+    {
+      field: "status",
+      headerName: "Status",
+      minWidth: 130,
+      flex: 0.7,
+      cellClassName: (params) => {
+        return params.value === "Delivered" ? "greenColor" : "redColor";
+      },
+    },
+    {
+      field: "itemsQty",
+      headerName: "Items Qty",
+      type: "number",
+      minWidth: 130,
+      flex: 0.7,
+    },
+
+    {
+      field: "total",
+      headerName: "Total",
+      type: "number",
+      minWidth: 130,
+      flex: 0.8,
+    },
+
+    {
+      field: " ",
+      flex: 1,
+      minWidth: 150,
+      headerName: "",
+      type: "number",
+      sortable: false,
+      renderCell: (params) => {
+        return (
+          <>
+            <Link to={`/user/order/${params.id}`}>
+              <Button>
+                <AiOutlineArrowRight size={20} />
+              </Button>
+            </Link>
+          </>
+        );
+      },
+    },
+  ];
+
+  const row = [];
+
+  orders &&
+    orders.forEach((item) => {
+      row.push({
+        id: item._id,
+        
+        itemsQty: item.orderItems.length,
+
+        total: "US$ " + item.totalPrice,
+        status: item.status,
+      });
+    });
+  return (
+    <div className="pl-8 pt-1">
+     <DataGrid 
+     rows={row}
+     columns={columns}
+     pageSize={10}
+     disableSelectionOnClick
+     autoHeight
+     />
+    </div>
+  )
 }
 
 export default ProfileContent;
