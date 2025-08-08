@@ -102,7 +102,7 @@ const Header = ({ activeHeading }) => {
 
               {/* Become Seller */}
               <div className="hidden md:block bg-blue-600 px-4 py-2 rounded-md">
-                <Link to="/seller">
+                <Link to="/shop-create">
                   <span className="text-white flex items-center">
                     Become Seller <IoIosArrowForward className="ml-1" />
                   </span>
@@ -268,7 +268,7 @@ const Header = ({ activeHeading }) => {
                 {/* Navbar */}
                 <Navbar active={activeHeading} />
                 <div className={`${styles.button} ml-4 bg-blue-600 !rounded-[4px]`}>
-                  <Link to="/seller">
+                  <Link to="/shop-create">
                     <span className="text-white flex items-center">
                       Become Seller <IoIosArrowForward className="ml-1" />
                     </span>

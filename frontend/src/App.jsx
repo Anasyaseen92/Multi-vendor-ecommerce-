@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import './App.css'
-import {LoginPage , SignupPage,HomePage ,ActivationPage, ProductsPage,BestSellingPage, EventsPage,FAQPage,ProductDetailsPage,ProfilePage} from './Routes.jsx'
+import {LoginPage , SignupPage,HomePage ,ActivationPage, ProductsPage,BestSellingPage, EventsPage,FAQPage,ProductDetailsPage,ProfilePage, CheckoutPage,ShopCreatePage} from './Routes.jsx'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { ToastContainer} from 'react-toastify';
 import Store from './redux/store.js'; // default import matches the default export // ✅ named import
@@ -31,6 +31,12 @@ function App() {
       <Route path='/best-selling' element={<BestSellingPage/>}/>
       <Route path='/events' element={<EventsPage/>}/>
       <Route path='/faq' element={<FAQPage/>}/>
+      <Route path='/checkout' element={<ProtectedRoute>
+        <CheckoutPage/>
+      </ProtectedRoute>}/>
+     
+      <Route path='/shop-create' element={<ShopCreatePage/>}/>
+
       <Route path='/profile' element={
         <ProtectedRoute isAuthenticated={isAuthenticated}>
           <ProfilePage/>
