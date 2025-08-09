@@ -13,26 +13,44 @@ function ShopCreate() {
   const [password, setPassword] = useState("");
   const [visible, setVisible] = useState("");
   const [name, setName] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState();
-  const [address, setAddress] = useState();
-  const [zipCode, setZipCode] = useState();
-  const [avatar, setAvatar] = useState();
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [address, setAddress] = useState("");
+  const [zipCode, setZipCode] = useState("");
+  const [avatar, setAvatar] = useState(false);
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const { data } = await axios.post(
-        `${server}/user/login-user`,
-        { email, password },
-        { withCredentials: true }
-      );
-      toast.success("Login success!");
-      navigate("/");
-      window.location.reload(true);
-    } catch (err) {
-      console.error("Login error:", err.response?.data);
-      toast.error(err.response?.data?.message || "Login failed");
-    }
+   
+       e.preventDefault();
+      const config = {headers: {"Content-Type":"multipart/form-data"}}
+   
+      const newForm =new FormData();
+   
+      newForm.append("file", avatar);
+      newForm.append("name", name);
+      newForm.append("email", email);
+      newForm.append("password", password);
+      newForm.append("zipCode", zipCode);
+      newForm.append("address", address);
+      newForm.append("phoneNumber", phoneNumber);
+
+   
+      axios
+      .post(`${server}/seller/create-shop`,newForm,config)
+      .then((res) =>{
+      toast.success(res.data.message);
+      setName("");
+      setEmail("");
+      setPassword("");
+      setAvatar("");
+      setZipCode("");
+      setAddress("");
+      setPhoneNumber("");
+      })
+      .catch((error) =>{
+       const errMsg = error?.response?.data?.message || "Something went wrong";
+       toast.error(errMsg);
+      });
+     
   };
 
   const handleFileInputChange = (e) => {
