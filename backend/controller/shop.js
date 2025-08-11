@@ -3,11 +3,12 @@ const path = require("path");
 const fs = require("fs");
 const jwt = require("jsonwebtoken");
 const sendMail = require("../utils/sendMail");
-const sendToken = require("../utils/jwtToken");
+
 const Shop = require("../model/shop");
 const upload = require("../multer");
 const ErrorHandler = require("../utils/ErrorHandler");
 const catchAsyncErrors = require("../middleware/catchAsyncErrors");
+const sendShopToken = require("../utils/shopToken");
 
 const router = express.Router();
 
@@ -72,7 +73,6 @@ const createActivationToken = (seller) => {
 };
 
 // ===== Activate Shop - Save to DB =====
-// Notice the route is `/activation` only (no /shop prefix)
 router.post(
   "/activation",
   catchAsyncErrors(async (req, res, next) => {
@@ -88,7 +88,7 @@ router.post(
 
     const { name, email, password, avatar, zipCode, address, phoneNumber } = sellerData;
 
-    // Check if user exists
+    // Check if userexists
     const existingUser = await Shop.findOne({ email });
     if (existingUser) {
       return next(new ErrorHandler("User already exists", 400));
@@ -106,7 +106,7 @@ router.post(
     });
 
     // Send token & login
-    sendToken(seller, 201, res);
+    sendShopToken(seller, 201, res);
   })
 );
 

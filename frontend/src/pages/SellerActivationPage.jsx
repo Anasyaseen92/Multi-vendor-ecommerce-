@@ -1,68 +1,58 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { server } from "../../server.js";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { server } from "../../server";
 
-function SellerActivationPage() {
+const SellerActivationPage = () => {
   const { activation_token } = useParams();
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
-  const [status, setStatus] = useState(null); // "success" | "error"
+  const [status, setStatus] = useState("loading"); 
+  // "loading" | "success" | "error"
 
   useEffect(() => {
-    if (!activation_token) {
-      setStatus("error");
-      setLoading(false);
-      return;
-    }
-
-    const activateShop = async () => {
+    const sendRequest = async () => {
       try {
-        const { data } = await axios.get(
-          `${server}/shop/activation/${activation_token}`
-        );
-        setStatus("success");
-        setTimeout(() => navigate("/shop-login"), 3000); // redirect after 3s
-      } catch (error) {
+        const res = await axios.post(`${server}/seller/activation`, {
+          activation_token, // send in body like Postman
+        });
+
+        if (res.data && res.data.success) {
+          setStatus("success");
+        } else {
+          setStatus("error");
+        }
+      } catch (err) {
         setStatus("error");
-        setTimeout(() => navigate("/shop-login"), 3000);
-      } finally {
-        setLoading(false);
       }
     };
 
-    activateShop();
-  }, [activation_token, navigate]);
+    if (activation_token) {
+      sendRequest();
+    } else {
+      setStatus("error");
+    }
+  }, [activation_token]);
+
+  if (status === "loading") {
+    return <p>Activating your account...</p>;
+  }
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
-      <div className="bg-white shadow-lg rounded-lg p-8 max-w-md text-center">
-        {loading && <p className="text-lg font-semibold">Activating shop...</p>}
-
-        {!loading && status === "success" && (
-          <>
-            <h2 className="text-2xl font-bold text-green-600 mb-4">
-              🎉 Shop Successfully Created!
-            </h2>
-            <p className="text-gray-700">
-              Your shop has been activated. Redirecting to login...
-            </p>
-          </>
-        )}
-
-        {!loading && status === "error" && (
-          <>
-            <h2 className="text-2xl font-bold text-red-600 mb-4">
-              ❌ Activation Link Expired or Invalid
-            </h2>
-            <p className="text-gray-700">
-              Please request a new activation email.
-            </p>
-          </>
-        )}
-      </div>
+    <div
+      style={{
+        width: "100%",
+        height: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      {status === "success" ? (
+        <p>Your account has been created successfully!</p>
+      ) : (
+        <p>Your token is expired or invalid!</p>
+      )}
     </div>
   );
-}
+};
 
 export default SellerActivationPage;

@@ -40,7 +40,8 @@ router.post("/create-user", upload.single("file"), async (req, res, next) => {
     };
 
     // Create activation token
-    const activationToken = createActivationToken(user);
+    const activationToken = createActivationToken(seller);
+    console.log("Activation token (copy for Postman):", activationToken);
     const activationUrl = `http://localhost:5173/activation/${activationToken}`;
 
     // Send activation email
