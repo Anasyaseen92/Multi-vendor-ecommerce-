@@ -3,7 +3,7 @@ const path = require("path");
 const fs = require("fs");
 const jwt = require("jsonwebtoken");
 const sendMail = require("../utils/sendMail");
-
+const {  isSeller } = require("../middleware/auth");
 const Shop = require("../model/shop");
 const upload = require("../multer");
 const ErrorHandler = require("../utils/ErrorHandler");
@@ -82,19 +82,19 @@ router.post(
     try {
       sellerData = jwt.verify(activation_token, process.env.ACTIVATION_SECRET);
     } catch (err) {
-      console.error("JWT Verification Failed:", err);
       return next(new ErrorHandler("Activation token expired or invalid", 400));
     }
 
     const { name, email, password, avatar, zipCode, address, phoneNumber } = sellerData;
 
-    // Check if userexists
     const existingUser = await Shop.findOne({ email });
     if (existingUser) {
-      return next(new ErrorHandler("User already exists", 400));
+      return res.status(200).json({
+        success: true,
+        message: "User already activated",
+      });
     }
 
-    // Save seller in DB
     const seller = await Shop.create({
       name,
       email,
@@ -105,9 +105,57 @@ router.post(
       phoneNumber,
     });
 
-    // Send token & login
     sendShopToken(seller, 201, res);
   })
 );
+
+
+//login seller
+router.post("/login-seller", catchAsyncErrors(async(req, res, next)=>{
+  try {
+    const {email,password} = req.body;
+if(!email || !password){
+  return next(new ErrorHandler("Please provide the all fields!", 400));
+}
+
+const shop = await Shop.findOne({email}).select("+password");
+    if(!shop){
+      return next(new ErrorHandler("User does not exist", 400));
+    }
+
+    const isPasswordValid = await shop.comparePassword(password);
+
+    if(!isPasswordValid) {
+      return next(new ErrorHandler("Please provide the correct information", 400));
+    }
+
+    sendShopToken(shop, 201, res);
+  } catch (error) {
+    return next(new ErrorHandler(error.message, 500));
+  }
+}))
+
+//load seller
+router.get(
+  "/getSeller",
+  isSeller,
+  catchAsyncErrors(async (req, res, next) => {
+    if (!req.seller || !req.seller._id) {
+      return next(new ErrorHandler("Seller not authenticated", 401));
+    }
+
+    const seller = await Shop.findById(req.seller._id);
+
+    if (!seller) {
+      return next(new ErrorHandler("User doesn't exist", 400));
+    }
+
+    res.status(200).json({
+      success: true,
+      seller,
+    });
+  })
+);
+
 
 module.exports = router;

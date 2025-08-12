@@ -1,58 +1,53 @@
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { server } from "../../server";
 
-const SellerActivationPage = () => {
+function SellerActivationPage() {
   const { activation_token } = useParams();
-  const [status, setStatus] = useState("loading"); 
-  // "loading" | "success" | "error"
+  const [status, setStatus] = useState("idle"); // 'idle' | 'loading' | 'success' | 'error'
 
-  useEffect(() => {
-    const sendRequest = async () => {
-      try {
-        const res = await axios.post(`${server}/seller/activation`, {
-          activation_token, // send in body like Postman
-        });
+  const activateEmail = async () => {
+    setStatus("loading");
+    try {
+      const res = await axios.post(
+        `${server}/seller/activation`,
+        { activation_token },
+        { headers: { "Content-Type": "application/json" } }
+      );
+      setStatus("success");
+    } catch (e) {
+      console.log("Full error:", e.response?.data || e.message);
 
-        if (res.data && res.data.success) {
-          setStatus("success");
-        } else {
-          setStatus("error");
-        }
-      } catch (err) {
-        setStatus("error");
-      }
-    };
-
-    if (activation_token) {
-      sendRequest();
-    } else {
       setStatus("error");
     }
-  }, [activation_token]);
-
-  if (status === "loading") {
-    return <p>Activating your account...</p>;
-  }
+  };
 
   return (
-    <div
-      style={{
-        width: "100%",
-        height: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      {status === "success" ? (
-        <p>Your account has been created successfully!</p>
-      ) : (
-        <p>Your token is expired or invalid!</p>
+    <div className="w-full h-screen flex flex-col items-center justify-center gap-4 px-4 text-center">
+      {status === "success" && (
+        <p className="text-green-600 text-lg font-semibold">
+          🎉 Your account has been successfully created!
+        </p>
       )}
+
+      {status === "error" && (
+        <p className="text-red-600 text-lg font-semibold">
+          ❌ Your activation token is expired or invalid.
+        </p>
+      )}
+
+      <button
+        onClick={activateEmail}
+        disabled={status === "loading" || status === "success"}
+        className={`${
+          status === "success" ? "bg-gray-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-500"
+        } text-white py-2 px-6 rounded font-semibold transition-all duration-200`}
+      >
+        {status === "loading" ? "Verifying..." : "Verify your account"}
+      </button>
     </div>
   );
-};
+}
 
 export default SellerActivationPage;

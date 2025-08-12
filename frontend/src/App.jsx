@@ -1,25 +1,30 @@
 import { useEffect } from 'react';
 import './App.css'
-import {LoginPage , SignupPage,HomePage ,ActivationPage, ProductsPage,BestSellingPage, EventsPage,FAQPage,ProductDetailsPage,ProfilePage, CheckoutPage,ShopCreatePage,SellerActivationPage} from './Routes.jsx'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import {LoginPage , SignupPage,HomePage ,ActivationPage, ProductsPage,BestSellingPage, EventsPage,FAQPage,ProductDetailsPage,ProfilePage, CheckoutPage,ShopCreatePage,SellerActivationPage,ShopLoginPage} from './Routes.jsx'
+import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom'
 import { ToastContainer} from 'react-toastify';
 import Store from './redux/store.js'; // default import matches the default export // ✅ named import
-import { loadUser } from './redux/actions/user.js'; // ✅ Correct
+import { loadSeller, loadUser } from './redux/actions/user.js'; // ✅ Correct
 import { useSelector } from 'react-redux';
 import ProtectedRoute from './ProtectedRoute.jsx';
-
+import {ShopHomePage} from "./ShopRoutes.js";
+import SellerProtectedRoute from './SellerProtectedRoute.jsx';
 
 
 function App() {
   const { loading, isAuthenticated} = useSelector((state) => state.user);
+  const {isLoading, isSeller} = useSelector((state) => state.seller);
+  //const navigate = useNavigate();
 
   useEffect(()=>{
    Store.dispatch(loadUser());
+   Store.dispatch(loadSeller());
+  
   }, []);
   return (
    <>
    {
-    loading ? (null):(
+    loading || isLoading ? (null):(
        <BrowserRouter>
     <Routes>
       <Route path='/' element={<HomePage/>}/> 
@@ -35,8 +40,18 @@ function App() {
       <Route path='/checkout' element={<ProtectedRoute>
         <CheckoutPage/>
       </ProtectedRoute>}/>
-     
+     {/* shop routes */}
       <Route path='/shop-create' element={<ShopCreatePage/>}/>
+      <Route path='/shop-login' element={<ShopLoginPage/>}/>
+      <Route path='/shop/:id' element={
+
+        <SellerProtectedRoute
+        isSeller={isSeller}
+       
+        >
+          <ShopHomePage/>
+        </SellerProtectedRoute>
+      }/>
 
       <Route path='/profile' element={
         <ProtectedRoute isAuthenticated={isAuthenticated}>
