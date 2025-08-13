@@ -26,9 +26,12 @@ if(process.env.NODE_ENV !== "PRODUCTION"){
 //import routes
 const user = require("./controller/user");
 const shop = require("./controller/shop");
+const product = require("./controller/product");
+
 
 app.use("/api/v2/user", user);
 app.use("/api/v2/seller", shop);
+app.use("/api/v2/product", product);
 
 app.use(errorMiddleware);
 module.exports = app;
