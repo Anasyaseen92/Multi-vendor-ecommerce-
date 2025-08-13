@@ -19,6 +19,7 @@ const handleSubmit = async (e) => {
       password,
     },{withCredentials:true});
     toast.success("Login success!");
+    
     navigate("/dashboard");
     window.location.reload(true);
   } catch (err) {
