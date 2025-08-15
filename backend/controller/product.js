@@ -16,7 +16,7 @@ try {
     }
     else{
         const files= req.files;
-        const imageUrls = files.map((file) => `${file.fileName}`)
+        const imageUrls = files.map((file) => `${file.filename}`)
         const productData = req.body;
         productData.image = imageUrls;
         productData.shop = shop;

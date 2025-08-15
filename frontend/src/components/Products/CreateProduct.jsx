@@ -3,9 +3,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { categoriesData } from "../../static/data";
 import { AiOutlinePlusCircle } from "react-icons/ai";
+import { createProduct } from "../../redux/actions/product";
+import { useEffect } from "react";
+import { toast } from 'react-toastify';
+
 
 function CreateProduct() {
   const { seller } = useSelector((state) => state.seller);
+  const { isLoading, success, error } = useSelector((state) => state.products);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -14,9 +19,20 @@ function CreateProduct() {
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
   const [tags, setTags] = useState("");
-  const [originalPrice, setOriginalPrice] = useState();
-  const [discountPrice, setDiscountPrice] = useState();
-  const [stock, setStock] = useState();
+  const [originalPrice, setOriginalPrice] = useState("");
+  const [discountPrice, setDiscountPrice] = useState("");
+  const [stock, setStock] = useState("");
+
+  useEffect(() =>{
+    if(error){
+      toast.error(error);
+    }
+    if(success){
+      toast.success("Product created successfulyy!");
+      navigate("/dashboard");
+      window.location.reload();
+    }
+  },[dispatch, error, success]);
 
   const handleImageChange = (e) => {
     e.preventDefault();
@@ -26,6 +42,22 @@ function CreateProduct() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    const newForm = new FormData();
+
+    images.forEach((image) =>{
+      newForm.append("images",image);
+    });
+      newForm.append("name",name);
+      newForm.append("description",description);
+      newForm.append("category",category);
+      newForm.append("tags",tags);
+      newForm.append("originalPrice",originalPrice);
+      newForm.append("discountPrice",discountPrice);
+      newForm.append("stock",stock);
+      newForm.append("shopId",seller._id);
+dispatch(createProduct(newForm));
+
   };
 
   return (
@@ -54,14 +86,16 @@ function CreateProduct() {
           <label className="pb-2 block">
             Description <span className="text-red-500">*</span>
           </label>
-          <input
+          <textarea
+          cols="30"
+          required
             type="text"
             name="description"
             value={description}
-            className="mt-2 block w-full px-3 h-[40px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:border-blue-500 text-sm"
+            className="mt-2 block w-full px-3 pt-2 h-[40px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:border-blue-500 text-sm"
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Enter Your Product Description..."
-          />
+          ></textarea>
         </div>
 
         {/* Category */}
@@ -87,7 +121,7 @@ function CreateProduct() {
         {/* Tags */}
         <div>
           <label className="pb-2 block">
-            Tags <span className="text-red-500">*</span>
+            Tags 
           </label>
           <input
             type="text"
@@ -181,7 +215,7 @@ function CreateProduct() {
           <input
             type="submit"
             value="Create"
-            className="mt-2 bg-gray-500 text-white block w-full sm:w-[70%] px-3 h-[50px] border border-gray-300 rounded-[3px] mx-auto"
+            className="mt-2 bg-gray-500 text-white block w-full sm:w-[70%] px-3 h-[50px] border cursor-pointer  border-gray-300 rounded-[3px] mx-auto"
           />
         </div>
       </form>
