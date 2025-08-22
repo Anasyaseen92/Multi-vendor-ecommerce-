@@ -15,6 +15,9 @@ export const clearErrors = createAction("clearErrors");
 export const getAllProductsShopRequest = createAction("getAllProductsShopRequest");
 export const getAllProductsShopSuccess = createAction("getAllProductsShopSuccess");
 export const getAllProductsShopFailed = createAction("getAllProductsShopFailed");
+export const deleteProductSuccess = createAction("deleteProductSuccess");
+export const deleteProductFailed = createAction("deleteProductFailed");
+export const deleteProductRequest = createAction("deleteProductRequest");
 
 export const productReducer = createReducer(initialState, (builder) => {
   builder
@@ -43,6 +46,22 @@ export const productReducer = createReducer(initialState, (builder) => {
 
       .addCase(getAllProductsShopFailed , (state,action) =>{
       state.isLoading = false;
+      state.error = action.payload;
+     })
+
+     //delete product of a shop
+
+     
+     .addCase(deleteProductRequest, (state) =>{
+      state.isLoading =true;
+     })
+     .addCase(deleteProductSuccess, (state, action) =>{
+      state.isLoading =false;
+      state.message = action.payload;
+     })
+
+     .addCase(deleteProductFailed, (state, action) =>{
+      state.isLoading =false;
       state.error = action.payload;
      })
 
