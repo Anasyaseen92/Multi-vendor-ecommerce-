@@ -49,7 +49,7 @@ function ShopCreate() {
       .catch((error) =>{
        const errMsg = error?.response?.data?.message || "Something went wrong";
        toast.error(errMsg);
-      });
+      },{withCredentials:true});
      
   };
 

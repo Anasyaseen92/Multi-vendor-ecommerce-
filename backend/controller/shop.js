@@ -145,6 +145,8 @@ router.get(
     }
 
     const seller = await Shop.findById(req.seller._id);
+console.log("Seller from DB:", seller);
+
 
     if (!seller) {
       return next(new ErrorHandler("User doesn't exist", 400));
@@ -157,5 +159,21 @@ router.get(
   })
 );
 
+//shop log out
+router.get("/logout", catchAsyncErrors(async(req,res,next) =>{
+  try {
+    res.cookie("seller_token",null,{
+      expires: new Date(Date.now()),
+      httpOnly: true,
+    });
+
+    res.status(201).json({
+      success:true,
+      message:"Log out successfull"
+    });
+  } catch (error) {
+    return next(new ErrorHandler(error.message,500))
+  }
+}))
 
 module.exports = router;

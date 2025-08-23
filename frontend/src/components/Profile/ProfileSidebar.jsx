@@ -20,7 +20,7 @@ function ProfileSidebar({active,setActive}) {
         })
         .catch((error) =>{
             toast.error(error.response.data.message);
-        })
+        },{withCredentials:true})
     }
   return (
     <div

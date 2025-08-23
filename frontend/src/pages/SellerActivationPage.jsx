@@ -13,7 +13,8 @@ function SellerActivationPage() {
       const res = await axios.post(
         `${server}/seller/activation`,
         { activation_token },
-        { headers: { "Content-Type": "application/json" } }
+        { headers: { "Content-Type": "application/json" } },
+         {withCredentials: true,}
       );
       setStatus("success");
     } catch (e) {

@@ -58,13 +58,12 @@ router.get(
 
 router.delete(
   "/delete-shop-product/:id",
-  isSeller,
+ 
   catchAsyncErrors(async (req, res, next) => {
     try {
       const productId = req.params.id;
 
       const product = await Product.findByIdAndDelete(productId);
-
       if (!product) {
         return next(new ErrorHandler("Product not found with this id!", 500));
       }
