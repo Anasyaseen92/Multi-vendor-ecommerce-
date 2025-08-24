@@ -160,20 +160,23 @@ console.log("Seller from DB:", seller);
 );
 
 //shop log out
-router.get("/logout", catchAsyncErrors(async(req,res,next) =>{
+router.get("/logout", catchAsyncErrors(async (req, res, next) => {
   try {
-    res.cookie("seller_token",null,{
-      expires: new Date(Date.now()),
+    res.cookie("seller_token", "", {
       httpOnly: true,
+      expires: new Date(0),
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
     });
 
-    res.status(201).json({
-      success:true,
-      message:"Log out successfull"
+    res.status(200).json({
+      success: true,
+      message: "Logout successful",
     });
   } catch (error) {
-    return next(new ErrorHandler(error.message,500))
+    return next(new ErrorHandler(error.message, 500));
   }
-}))
+}));
+
 
 module.exports = router;

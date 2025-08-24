@@ -6,8 +6,8 @@ import axios from 'axios'
 
 function ShopInfo({isOwner}) {
     const {seller} = useSelector((state) => state.seller)
-    const logoutHandler = () =>{
-        axios.get(`${server}/shop/logout`);
+    const logoutHandler = async () =>{
+      await   axios.get(`${server}/seller/logout`,{ withCredentials: true });
         window.location.reload();
     }
   return (
