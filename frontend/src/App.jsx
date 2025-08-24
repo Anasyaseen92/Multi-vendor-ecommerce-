@@ -23,7 +23,7 @@ import { loadSeller, loadUser } from "./redux/actions/user.js"; // ✅ Correct
 import ProtectedRoute from "./ProtectedRoute.jsx";
 import { ShopHomePage } from "./ShopRoutes.js";
 import SellerProtectedRoute from "./SellerProtectedRoute.jsx";
-import {ShopDashboardPage,ShopCreateProduct, ShopAllProducts} from './routes/ShopRoutes.js'
+import {ShopDashboardPage,ShopCreateProduct, ShopAllProducts,ShopCreateEvents} from './routes/ShopRoutes.js'
 function App() {
   //const navigate = useNavigate();
 
@@ -84,6 +84,11 @@ function App() {
          <Route path="/dashboard-products" element={
           <SellerProtectedRoute>
             <ShopAllProducts/>
+          </SellerProtectedRoute>
+        }/>
+          <Route path="/dashboard-create-events" element={
+          <SellerProtectedRoute>
+            <ShopCreateEvents/>
           </SellerProtectedRoute>
         }/>
 
