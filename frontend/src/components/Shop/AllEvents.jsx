@@ -1,29 +1,27 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteProduct, getAllProductsShop } from "../../redux/actions/product";
+import { deleteProduct} from "../../redux/actions/product";
 import { Link } from "react-router-dom";
 import { Button } from "@mui/material";
 import { AiOutlineDelete, AiOutlineEye } from "react-icons/ai";
 import Loader from "../Layout/Loader";
 import { DataGrid } from "@mui/x-data-grid";
+import { deleteEvent, getAllEventsShop } from "../../redux/actions/event";
 
-
-
-function AllProducts() {
-
-  const { products, isLoading } = useSelector((state) => state.products);
+function AllEvents() {
+  const { events, isLoading } = useSelector((state) => state.events);
   const { seller } = useSelector((state) => state.seller);
 
   const dispatch = useDispatch();
 
   useEffect(() => {
     if (seller?._id) {
-      dispatch(getAllProductsShop(seller._id));
+      dispatch(getAllEventsShop(seller._id));
     }
   }, [dispatch, seller]);
 
   const handleDelete = (id) => {
-    dispatch(deleteProduct(id));
+    dispatch(deleteEvent(id));
     window.location.reload();
   };
 
@@ -86,8 +84,8 @@ function AllProducts() {
     },
   ];
 
-  const rows = products
-    ? products.map((item) => ({
+  const rows = events
+    ? events.map((item) => ({
         id: item._id,
         name: item.name,
         price: "US$" + item.discountPrice,
@@ -102,7 +100,6 @@ function AllProducts() {
         <Loader />
       ) : (
         <div className="w-full mx-8 pt-1 mt-10 bg-white">
-          
           <DataGrid
             rows={rows}
             columns={columns}
@@ -110,11 +107,10 @@ function AllProducts() {
             disableSelectionOnClick
             autoHeight
           />
-        
         </div>
       )}
     </>
   );
 }
 
-export default AllProducts;
+export default AllEvents;

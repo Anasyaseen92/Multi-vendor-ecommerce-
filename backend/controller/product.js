@@ -5,7 +5,8 @@ const Shop = require("../model/shop");
 const upload = require("../multer");
 const catchAsyncErrors = require("../middleware/catchAsyncErrors");
 const ErrorHandler = require("../utils/ErrorHandler");
-const {isSeller} = require("../middleware/auth")
+const fs = require("fs");
+//const {isSeller} = require("../middleware/auth")
 // create product
 
 router.post(
@@ -56,25 +57,43 @@ router.get(
 
 // delete product of a shop
 
+// delete product of a shop
 router.delete(
   "/delete-shop-product/:id",
- 
   catchAsyncErrors(async (req, res, next) => {
     try {
       const productId = req.params.id;
 
-      const product = await Product.findByIdAndDelete(productId);
-      if (!product) {
-        return next(new ErrorHandler("Product not found with this id!", 500));
+      const productData = await Product.findById(productId);
+
+      if (!productData) {
+        return next(new ErrorHandler("Product not found with this id!", 404));
       }
 
-      res.status(201).json({
+      // ✅ Check both `image` and `images` field (depends on schema)
+      const images = productData.image || productData.images;
+
+      if (images && images.length > 0) {
+        for (const imageUrl of images) {
+          const filePath = `uploads/${imageUrl}`;
+          if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath); // ✅ delete image from uploads
+          }
+        }
+      }
+
+      // ✅ Delete product from DB
+      await Product.findByIdAndDelete(productId);
+
+      res.status(200).json({
         success: true,
-        message : "Product Deleted Successfully!",
+        message: "Product and images deleted successfully!",
       });
     } catch (error) {
-      return next(new ErrorHandler(error, 400));
+      return next(new ErrorHandler(error.message, 500));
     }
   })
 );
+
+
 module.exports = router;

@@ -93,7 +93,7 @@ function DashboardSidebar({ active }) {
 
       {/* All events */}
       <div className="w-full flex items-center p-2 md:p-4">
-        <Link to="/dashboard-orders" className="w-full flex items-center">
+        <Link to="/dashboard-events" className="w-full flex items-center">
           <MdOutlineLocalOffer
             size={25}
             className={`${
@@ -175,7 +175,7 @@ function DashboardSidebar({ active }) {
 
       {/* Discount Codes*/}
       <div className="w-full flex items-center p-2 md:p-4">
-        <Link to="/dashboard/coupouns" className="w-full flex items-center">
+        <Link to="/dashboard-coupouns" className="w-full flex items-center">
           <AiOutlineGift
             size={25}
             className={`${
