@@ -15,23 +15,38 @@ import { toast } from "react-toastify";
 function AllCoupouns() {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
+  const [coupouns, setCoupouns] = useState([]);
+  const [isLoading, setIsLoading] = useState("");
   const [value, setValue] = useState("");
   const [minAmount, setMinAmount] = useState(null);
   const [maxAmount, setMaxAmount] = useState(null);
   const [selectedProducts, setSelectedProducts] = useState("");
-  const { products, isLoading } = useSelector((state) => state.products);
+  //const { products, isLoading } = useSelector((state) => state.products);
   const { seller } = useSelector((state) => state.seller);
-
+const { products} = useSelector((state) => state.products)
   const dispatch = useDispatch();
+useEffect(() => {
+  setIsLoading(true);
 
-  useEffect(() => {
-    if (seller?._id) {
-      dispatch(getAllProductsShop(seller._id));
-    }
-  }, [dispatch, seller]);
+  axios.get(`${server}/coupon/get-coupon/${seller._id}`, {
+    withCredentials: true,
+  })
+  .then((res) => {
+    setIsLoading(false);
+    console.log(res.data); // should show couponCodes
+    setCoupouns(res.data.couponCodes || []); // ✅ FIXED
+  })
+  .catch(() => {
+    setIsLoading(false);
+    setCoupouns([]); 
+  });
+}, [dispatch, seller]);
 
-  const handleDelete = (id) => {
-    dispatch(deleteProduct(id));
+
+  const handleDelete = async (id) => {
+    axios.delete(`${server}/coupon/delete-coupon/${id}`,{withCredentials: true}).then((res) => {
+      toast.success("Coupon code deleted succesfully!")
+    })
     window.location.reload();
   };
 
@@ -53,13 +68,9 @@ function AllCoupouns() {
     );
 
     toast.success("Coupon created successfully ✅");
-
+    setOpen(false);
     // ✅ Clear all fields after success
-    setName("");
-    setMinAmount("");
-    setMaxAmount("");
-    setSelectedProducts("");
-    setValue("");
+    window.location.reload();
   } catch (error) {
     toast.error(error.response?.data?.message || "Something went wrong ❌");
   }
@@ -70,22 +81,7 @@ function AllCoupouns() {
     { field: "id", headerName: "Product Id", minWidth: 150, flex: 0.7 },
     { field: "name", headerName: "Name", minWidth: 180, flex: 1.4 },
     { field: "price", headerName: "Price", minWidth: 180, flex: 0.6 },
-    { field: "stock", headerName: "Stock", minWidth: 80, flex: 0.5 },
-    { field: "sold", headerName: "Sold Out", minWidth: 130, flex: 0.6 },
-    {
-      field: "preview",
-      headerName: "Preview",
-      flex: 0.8,
-      minWidth: 120,
-      sortable: false,
-      renderCell: (params) => (
-        <Link to={`/product/${params.id}`}>
-          <Button>
-            <AiOutlineEye size={20} />
-          </Button>
-        </Link>
-      ),
-    },
+   
     {
       field: "delete",
       headerName: "Delete",
@@ -100,12 +96,11 @@ function AllCoupouns() {
     },
   ];
 
-  const rows = products
-    ? products.map((item) => ({
+  const rows = coupouns
+    ? coupouns.map((item) => ({
         id: item._id,
         name: item.name,
-        price: "US$" + item.discountPrice,
-        stock: item.stock,
+        price:item.value + " %",
         sold: 10,
       }))
     : [];
@@ -115,7 +110,7 @@ function AllCoupouns() {
       {isLoading ? (
         <Loader />
       ) : (
-        <div className="w-full mx-8 pt-1 mt-10 bg-white">
+        <div className="w-full ml-45 mr-5 pt-1 mt-5 bg-white">
           <div className="w-full flex justify-end">
             <div
               onClick={() => setOpen(true)}

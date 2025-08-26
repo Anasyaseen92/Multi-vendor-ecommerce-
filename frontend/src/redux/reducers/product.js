@@ -18,6 +18,9 @@ export const getAllProductsShopFailed = createAction("getAllProductsShopFailed")
 export const deleteProductSuccess = createAction("deleteProductSuccess");
 export const deleteProductFailed = createAction("deleteProductFailed");
 export const deleteProductRequest = createAction("deleteProductRequest");
+export const getAllProductsRequest = createAction("getAllProductsRequest");
+export const getAllProductsSuccess = createAction("getAllProductsSuccess");
+export const getAllProductsFailed = createAction("getAllProductsFailed");
 
 export const productReducer = createReducer(initialState, (builder) => {
   builder
@@ -64,7 +67,22 @@ export const productReducer = createReducer(initialState, (builder) => {
       state.isLoading =false;
       state.error = action.payload;
      })
+// get all products of all shop
 
+ .addCase(getAllProductsRequest, (state) =>{
+      state.isLoading =true;
+     })
+
+   .addCase(getAllProductsSuccess, (state, action) =>{
+      state.isLoading =false;
+      state.allProducts = action.payload;
+     })   
+
+       .addCase(getAllProductsFailed, (state, action) =>{
+      state.isLoading =false;
+      state.error = action.payload;
+     })  
+     
     .addCase(clearErrors, (state) => {
       state.error = null;
     });

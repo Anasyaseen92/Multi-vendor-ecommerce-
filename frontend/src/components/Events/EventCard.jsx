@@ -1,33 +1,82 @@
 import React from "react";
-//import styles from "../../../styles/styles.js";
 import CountDown from "./CountDown.jsx";
 import styles from "../../styles/styles.js";
-//import { productData } from "../../static/data.jsx";
+import { useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
+import { backend_url } from "../../../server.js";
 
-const EventCard = ({ active,data}) => {
+const EventPage = ({ data }) => {
+  const dispatch = useDispatch();
+
+  const addToCartHandler = (item) => {
+    console.log("Adding to cart:", item);
+    // dispatch(addToCart(item));
+  };
+
   return (
-    <div
-      className={`w-full block bg-white rounded-lg ${
-        active ? "unset" : "mb-12"
-      } lg:flex p-2`}
-    >
-      <div className="w-full mr-4 lg:w-[50%] m-auto">
-        <img src="https://m.media-amazon.com/images/I/31Vle5fVdaL.jpg" alt="" className="rounded-lg"/>
-      </div>
-      <div className="w-full lg:[50%] flex flex-col justify-center">
-        <h2 className={`${styles.productTitle}`}>Iphone 14 pro max 8/256gb</h2>
-        <p>Lorem isum, dollar sit amet consectetur adip sj ndiehhe ihe fjkrfoir fr firfrnfrhi pi93 hdi</p>
-        <div className="flex py-2 justify-between">
-          <div className="flex">
-            <h5 className="font-[500] text-[18px] text-[#d55b45] pr-3 line-through">1099$</h5>
-            <h5 className="font-bold text-[20px] text-[#333] font-Roboto">999$</h5>
-          </div>
-          <span className="pr-100 font-[400] text-[17px] text-[#44a55e]">120 sold</span>
+    <div className="w-full min-h-screen bg-white p-6 md:p-10">
+      {/* Container with equal height for image and details */}
+      <div className="flex flex-col md:flex-row gap-8 md:gap-10 items-start">
+        {/* Left Side - Image */}
+        <div className="w-full md:w-1/2 flex justify-center items-center">
+          <img
+            src={`${backend_url}/${data?.images?.[0] || "default-image.png"}`}
+            alt={data?.name || "Event Image"}
+            className="w-full max-w-[500px] max-h-[450px] object-contain rounded-xl shadow"
+          />
         </div>
-        <CountDown/>
+
+        {/* Right Side - Details */}
+        <div className="w-full md:w-1/1 flex-col justify-between gap-5">
+          <div>
+            <h2 className={`${styles.productTitle} text-2xl md:text-3xl font-bold`}>
+              {data?.name || "Event Name"}
+            </h2>
+            <p className="text-gray-700 text-base md:text-lg leading-relaxed mt-2">
+              {data?.description || "Event description not available."}
+            </p>
+
+            {/* Prices */}
+            <div className="flex items-center gap-4 mt-4">
+              {data?.originalPrice && (
+                <h5 className="text-lg md:text-xl text-red-500 line-through">
+                  ${data.originalPrice}
+                </h5>
+              )}
+              <h5 className="text-2xl md:text-3xl font-bold text-gray-900">
+                ${data?.discountPrice || 0}
+              </h5>
+            </div>
+
+            {/* Stock */}
+            <span className="text-green-600 font-medium mt-2">
+              {data?.sold_out || 0} Sold
+            </span>
+
+            {/* Countdown */}
+            <div className="mt-4">
+              <CountDown data={data} />
+            </div>
+          </div>
+
+          {/* Buttons at the bottom */}
+          <div className="flex flex-wrap gap-4 mt-6">
+            <Link to={`/product/${data?._id}?isEvent=true`}>
+              <button className="bg-black text-white px-5 py-2 rounded-lg shadow hover:bg-gray-800 transition">
+                See Details
+              </button>
+            </Link>
+            <button
+              onClick={() => addToCartHandler(data)}
+              className="bg-black text-white px-5 py-2 rounded-lg shadow hover:bg-gray-800 transition"
+            >
+              Add to Cart
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
 };
 
-export default EventCard;
+export default EventPage;

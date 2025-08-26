@@ -24,12 +24,16 @@ import ProtectedRoute from "./ProtectedRoute.jsx";
 import { ShopHomePage } from "./ShopRoutes.js";
 import SellerProtectedRoute from "./SellerProtectedRoute.jsx";
 import {ShopDashboardPage,ShopCreateProduct, ShopAllProducts,ShopCreateEvents, ShopAllEvents, ShopAllCoupouns} from './routes/ShopRoutes.js'
+import { getAllProducts } from "./redux/actions/product.js";
+import { getAllEvents } from "./redux/actions/event.js";
 function App() {
   //const navigate = useNavigate();
 
   useEffect(() => {
     Store.dispatch(loadUser());
     Store.dispatch(loadSeller());
+    Store.dispatch(getAllProducts());
+    Store.dispatch(getAllEvents());
   }, []);
   return (
     <BrowserRouter>

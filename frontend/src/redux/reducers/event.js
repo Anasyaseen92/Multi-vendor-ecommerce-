@@ -8,6 +8,7 @@ const initialState = {
   success: false,
   error: null,
   message: null,
+   allEvents: [],
 };
 
 export const eventReducer = createReducer(initialState, (builder) => {
@@ -52,7 +53,18 @@ export const eventReducer = createReducer(initialState, (builder) => {
       state.isLoading = false;
       state.error = action.payload;
     })
-
+// Get all events from all shop
+.addCase("getAlleventsRequest", (state) => {
+      state.isLoading = true;
+    })
+    .addCase("getAlleventsSuccess", (state, action) => {
+      state.isLoading = false;
+      state.allEvents = action.payload;
+    })
+    .addCase("getAlleventsFailed", (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload;
+    })
     // CLEAR ERRORS
     .addCase("clearErrors", (state) => {
       state.error = null;

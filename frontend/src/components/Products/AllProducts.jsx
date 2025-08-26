@@ -101,7 +101,7 @@ function AllProducts() {
       {isLoading ? (
         <Loader />
       ) : (
-        <div className="w-full mx-8 pt-1 mt-10 bg-white">
+        <div className="w-[90%] ml-45 mr-5 pt-1 mt-10 bg-white">
           
           <DataGrid
             rows={rows}

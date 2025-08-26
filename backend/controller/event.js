@@ -15,27 +15,35 @@ router.post(
     try {
       const shopId = req.body.shopId;
       const shop = await Shop.findById(shopId);
+
       if (!shop) {
         return next(new ErrorHandler("Shop Id is invalid", 400));
-      } else {
-        const files = req.files;
-        const imageUrls = files.map((file) => `${file.filename}`);
-        const eventData = req.body;
-       eventData.image = imageUrls;
-       eventData.shop = shop;
-
-        const event = await Event.create(eventData);
-
-        res.status(201).json({
-          success: true,
-          event,
-        });
       }
+
+      const files = req.files; 
+      if (!files || files.length === 0) {
+        return next(new ErrorHandler("Please upload at least one image", 400));
+      }
+
+      // Save all file names into images array
+      const imageUrls = files.map((file) => file.filename);
+
+      const eventData = req.body;
+      eventData.images = imageUrls;  // ✅ match schema
+      eventData.shop = shop;
+
+      const event = await Event.create(eventData);
+
+      res.status(201).json({
+        success: true,
+        event,
+      });
     } catch (error) {
-      return next(new ErrorHandler(error, 400));
+      return next(new ErrorHandler(error.message || error, 400));
     }
   })
 );
+
 
 // get all events of a shop
 
@@ -84,6 +92,27 @@ router.delete(
         message : "Event Deleted Successfully!",
       });
     } catch (error) {
+      return next(new ErrorHandler(error, 400));
+    }
+  })
+);
+
+//get all events of all shops 
+
+
+router.get(
+  "/get-all-events",
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+     
+      const events = await Event.find();
+  
+      res.json({
+        success: true,
+        events,
+      });
+    } catch (error) {
+      console.log(error);
       return next(new ErrorHandler(error, 400));
     }
   })
