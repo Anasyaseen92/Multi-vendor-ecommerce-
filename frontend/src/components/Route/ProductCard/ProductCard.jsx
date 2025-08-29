@@ -10,19 +10,20 @@ import {
   AiOutlineShoppingCart,
   AiOutlineStar,
 } from "react-icons/ai";
+import { backend_url } from "../../../../server.js";
 
 const ProductCard = ({ data }) => {
   const [click, setClick] = useState(false);
   const [open, setOpen] = useState(false);
 
   const productName = data.name.replace(/\s+/g, "-");
-
   return (
     <>
       <div className="w-full h-[370px] bg-white rounded-lg shadow-sm p-3 relative cursor-pointer">
         <Link to={`/product/${productName}`}>
           <img
-            src={data?.image_Url?.[0]?.url}
+         
+            src={`${backend_url}/${data?.images?.[0] || "default-image.png"}`}
             className="w-full h-[170px] object-contain"
             alt={data.name}
           />
@@ -44,19 +45,21 @@ const ProductCard = ({ data }) => {
             <AiOutlineStar className="text-yellow-400" size={20} />
           </div>
 
-          <div className="py-2 flex items-center justify-between">
-            <div className="flex gap-2">
-              <h5 className={`${styles.productDiscountPrice}`}>
-                {data.price === 0 ? data.price : data.discount_price}$
-              </h5>
-              {data.price > 0 && (
-                <h4 className={`${styles.price}`}>{data.price}$</h4>
-              )}
-            </div>
-            <span className="font-[400] text-[17px] text-[#68d284]">
-              {data.total_sell} sold
-            </span>
-          </div>
+          <div className="py-2  items-center justify-between">
+  <div className="flex items-baseline  gap-2">
+    <h5 className={`${styles.productDiscountPrice}  text-[10px]`}>
+      {data?.discountPrice ? `${data.discountPrice}$` : ""}
+    </h5>
+    {data?.originalPrice > 0 && (
+      <h4 className={`${styles.price}`}>{data?.originalPrice}$</h4>
+    )}
+  </div>
+
+  <span className="ml-2 whitespace-nowrap font-[400] text-[14px] text-[#68d284]">
+    {data.sold_out} sold
+  </span>
+</div>
+
         </Link>
 
         {/* Icons */}

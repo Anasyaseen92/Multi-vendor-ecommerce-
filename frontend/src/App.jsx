@@ -26,6 +26,7 @@ import SellerProtectedRoute from "./SellerProtectedRoute.jsx";
 import {ShopDashboardPage,ShopCreateProduct, ShopAllProducts,ShopCreateEvents, ShopAllEvents, ShopAllCoupouns} from './routes/ShopRoutes.js'
 import { getAllProducts } from "./redux/actions/product.js";
 import { getAllEvents } from "./redux/actions/event.js";
+import Categories from "./components/Route/Categories/Categories.jsx";
 function App() {
   //const navigate = useNavigate();
 
@@ -39,6 +40,8 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<HomePage />} />
+       
+
         <Route path="/login" element={<LoginPage />} />
         <Route path="/sign-up" element={<SignupPage />} />
         <Route

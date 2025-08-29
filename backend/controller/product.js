@@ -22,7 +22,7 @@ router.post(
         const files = req.files;
         const imageUrls = files.map((file) => `${file.filename}`);
         const productData = req.body;
-        productData.image = imageUrls;
+        productData.images = imageUrls;
         productData.shop = shop;
 
         const product = await Product.create(productData);
@@ -55,7 +55,7 @@ router.get(
   })
 );
 
-// delete product of a shop
+
 
 // delete product of a shop
 router.delete(
@@ -98,7 +98,7 @@ router.delete(
 
 // get all products of all shops
 
-router.get("/get-all-products-shops", catchAsyncErrors( async(req,res,next) =>{
+router.get("/get-all-products", catchAsyncErrors( async(req,res,next) =>{
   try {
     const products = await Product.find();
 

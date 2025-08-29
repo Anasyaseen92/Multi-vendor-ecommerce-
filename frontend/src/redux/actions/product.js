@@ -33,7 +33,7 @@ export const createProduct = (newForm) => async (dispatch) => {
 export const getAllProductsShop = (id) => async(dispatch) =>{
   try {
     dispatch({
-      type: "getALlProductsShopRequest",
+      type: "getAllProductsShopRequest",
     });
 
     const {data} = await axios.get(`${server}/product/get-all-products-shop/${id}`);

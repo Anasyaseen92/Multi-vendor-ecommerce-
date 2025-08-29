@@ -4,7 +4,8 @@ const initialState = {
   product: null,
   products: [],  
   success: false,
-  error: null
+  error: null,
+  allProducts:[]
 };
 
 

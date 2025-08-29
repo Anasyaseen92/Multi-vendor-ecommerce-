@@ -8,13 +8,13 @@ import {
   AiOutlineShoppingCart,
 } from "react-icons/ai";
 import { Link } from "react-router-dom";
+import { backend_url } from "../../../../server";
 
 const ProductDetailsCard = ({ setOpen, data }) => {
   const [count, setCount] = useState(1);
   const [click, setClick] = useState(false);
 
   const handleMessageSubmit = () => {};
-
   const decrementCount = () => {
     if (count > 1) setCount(count - 1);
   };
@@ -38,13 +38,16 @@ const ProductDetailsCard = ({ setOpen, data }) => {
               {/* Left Side - Image and Seller */}
               <div className="w-full md:w-[50%]">
                 <img
-                  src={data.image_Url?.[0]?.url || ""}
+             
+                  src={`${backend_url}/${data?.images?.[0] || "default-image.png"}`}
                   alt={data.name}
                   className="w-full object-contain"
                 />
                 <Link to={`/shop/preview/${data.shop._id}`} className="flex mt-4 items-center">
                   <img
-                    src={data.shop.shop_avatar?.url || ""}
+                  
+                  src={`${backend_url}/${data?.shop.avatar|| "default-image.png"}`}
+
                     alt={data.shop.name}
                     className="w-[50px] h-[50px] rounded-full mr-2"
                   />

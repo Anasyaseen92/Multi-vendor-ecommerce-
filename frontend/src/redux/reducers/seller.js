@@ -14,7 +14,6 @@ export const sellerReducer = createReducer(initialState, (builder) => {
       state.error = null;
     })
     .addCase("LoadSellerSuccess", (state, action) => {
-       console.log("LoadSellerSuccess payload:", action.payload);
       state.isSeller = true;
       state.isLoading = false;
       state.seller = action.payload;

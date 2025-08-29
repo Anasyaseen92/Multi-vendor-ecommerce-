@@ -4,8 +4,8 @@ import EventCard from "./EventCard.jsx";
 import styles from "../../styles/styles.js";
 import { useSelector } from "react-redux";
 
-const Events = ({data}) => {
- // const { allEvents, isLoading } = useSelector((state) => state.events);
+const Events = () => {
+ const { allEvents} = useSelector((state) => state.events);
 
   return (
     <div>
@@ -16,7 +16,7 @@ const Events = ({data}) => {
           </div>
 
           <div className="w-full grid">
-            <EventCard data={true} />
+            <EventCard data={allEvents[0]} />
           </div>
         </div> 
       

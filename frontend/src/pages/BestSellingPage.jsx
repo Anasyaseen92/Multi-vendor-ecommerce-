@@ -1,16 +1,19 @@
 import React,{useEffect, useState} from 'react'
 import Header from '../components/Layout/Header';
 import styles from '../styles/styles';
-import { productData } from '../static/data';
+//import { productData } from '../static/data';
 import ProductCard from '../components/Route/ProductCard/ProductCard';
+import { useSelector } from 'react-redux';
 
 
 function BestSellingPage() {
     const [data, setData] = useState([]);
+    const allProducts = useSelector((state) => state.products.allProducts);
+
 
   
   useEffect(()=>{
-   const d = productData && productData.sort((a,b) => b.total_sell - a.total_sell)
+   const d = allProducts && [...allProducts].sort((a,b) => b.total_sell - a.total_sell)
    setData(d);
    window.scrollTo(0,0);
   },[]);

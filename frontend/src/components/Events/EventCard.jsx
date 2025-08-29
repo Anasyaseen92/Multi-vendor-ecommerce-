@@ -10,11 +10,11 @@ const EventPage = ({ data }) => {
 
   const addToCartHandler = (item) => {
     console.log("Adding to cart:", item);
-    // dispatch(addToCart(item));
+  
   };
 
   return (
-    <div className="w-full min-h-screen bg-white p-6 md:p-10">
+    <div className="w-full  bg-white p-6 md:p-10">
       {/* Container with equal height for image and details */}
       <div className="flex flex-col md:flex-row gap-8 md:gap-10 items-start">
         {/* Left Side - Image */}
@@ -27,7 +27,7 @@ const EventPage = ({ data }) => {
         </div>
 
         {/* Right Side - Details */}
-        <div className="w-full md:w-1/1 flex-col justify-between gap-5">
+        <div className="w-full md:w-1/1 flex flex-col justify-between gap-5">
           <div>
             <h2 className={`${styles.productTitle} text-2xl md:text-3xl font-bold`}>
               {data?.name || "Event Name"}
