@@ -13,7 +13,7 @@ function BestSellingPage() {
 
   
   useEffect(()=>{
-   const d = allProducts && [...allProducts].sort((a,b) => b.total_sell - a.total_sell)
+   const d = allProducts && [...allProducts].sort((a,b) => b.sold_out - a.sold_out)
    setData(d);
    window.scrollTo(0,0);
   },[]);

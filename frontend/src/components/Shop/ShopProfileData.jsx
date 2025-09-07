@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { productData } from "../../static/data";
+//import { productData } from "../../static/data";
 import ProductCard from "../Route/ProductCard/ProductCard";
 import { Link, useParams } from "react-router-dom";
 import styles from "../../styles/styles";
@@ -14,7 +14,7 @@ function ShopProfileData({ isOwner }) {
 
   useEffect(() => {
     dispatch(getAllProductsShop(id));
-  }, [dispatch, id]); // ✅ added id to dependencies
+  }, [dispatch, id]);
 
   return (
     <div className="w-full">

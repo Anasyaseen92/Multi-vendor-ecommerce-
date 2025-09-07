@@ -5,15 +5,27 @@ import { useParams } from 'react-router-dom'
 import { productData } from '../static/data'
 import ProductDetails from '../components/Products/ProductDetails'
 import SuggestedProduct from '../components/Products/SuggestedProduct'
+import { useSelector } from 'react-redux'
 function ProductDetailsPage() {
-    const {name} = useParams();
+    const {id} = useParams();
     const [data,setData] = useState(null);
-    const productName = name.replace(/-/g," ");
+     
+    const allProducts = useSelector((state) => state.products.allProducts);
+     const { allEvents} = useSelector((state) => state.events);
+    
+ useEffect(() => {
+    if (!id) return;
 
-    useEffect(() =>{
-      const data =productData.find((i) => i.name === productName);
-      setData(data);
-    },[])
+    // First try to find in products
+    let found = allProducts.find((i) => i._id === id);
+
+    // If not found in products, try events
+    if (!found) {
+      found = allEvents.find((i) => i._id === id);
+    }
+
+    setData(found || null);
+  }, [allProducts, allEvents, id]);
   return (
     <div>
         <Header/>

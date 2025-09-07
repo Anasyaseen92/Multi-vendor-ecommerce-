@@ -23,7 +23,7 @@ import { loadSeller, loadUser } from "./redux/actions/user.js"; // ✅ Correct
 import ProtectedRoute from "./ProtectedRoute.jsx";
 import { ShopHomePage } from "./ShopRoutes.js";
 import SellerProtectedRoute from "./SellerProtectedRoute.jsx";
-import {ShopDashboardPage,ShopCreateProduct, ShopAllProducts,ShopCreateEvents, ShopAllEvents, ShopAllCoupouns} from './routes/ShopRoutes.js'
+import {ShopDashboardPage,ShopCreateProduct, ShopAllProducts,ShopCreateEvents, ShopAllEvents, ShopAllCoupouns,ShopPreviewPage} from './routes/ShopRoutes.js'
 import { getAllProducts } from "./redux/actions/product.js";
 import { getAllEvents } from "./redux/actions/event.js";
 import Categories from "./components/Route/Categories/Categories.jsx";
@@ -53,7 +53,7 @@ function App() {
           element={<SellerActivationPage />}
         />
         <Route path="/products" element={<ProductsPage />} />
-        <Route path="/product/:name" element={<ProductDetailsPage />} />
+        <Route path="/product/:id" element={<ProductDetailsPage />} />
         <Route path="/best-selling" element={<BestSellingPage />} />
         <Route path="/events" element={<EventsPage />} />
         <Route path="/faq" element={<FAQPage />} />
@@ -66,6 +66,7 @@ function App() {
           }
         />
         {/* shop routes */}
+                <Route path="/shop/preview/:id" element={<ShopPreviewPage />} />
         <Route path="/shop-create" element={<ShopCreatePage />} />
         <Route path="/shop-login" element={<ShopLoginPage />} />
         <Route

@@ -1,5 +1,5 @@
-import  { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import styles from "../../styles/styles";
 import {
   AiFillHeart,
@@ -7,12 +7,23 @@ import {
   AiOutlineMessage,
   AiOutlineShoppingCart,
 } from "react-icons/ai";
+import { backend_url } from "../../../server";
+import { getAllProductsShop } from "../../redux/actions/product";
+import { useDispatch, useSelector } from "react-redux";
 
 function ProductDetails({ data }) {
   const [count, setCount] = useState(1);
   const [click, setClick] = useState(false);
   const [select, setSelect] = useState(0);
   const navigate = useNavigate();
+
+  const allProducts = useSelector((state) => state.products.allProducts);
+
+  const dispatch = useDispatch();
+  const { id } = useParams();
+  useEffect(() => {
+    dispatch(getAllProductsShop(id));
+  }, [dispatch]);
 
   const incrementCount = () => {
     setCount(count + 1);
@@ -34,37 +45,29 @@ function ProductDetails({ data }) {
               style={{ gap: "6%" }}
             >
               {/* LEFT: Product Images (47%) */}
-              <div className="w-full 800px:w-[47%]">
+              <div className="w-full md:w-[47%]">
                 <img
-                  src={data?.image_Url?.[select]?.url}
+                  //src={data?.images?.[select]}
+                  src={`${backend_url}/${data?.images?.[select]}`}
                   alt=""
                   className="w-full max-h-[500px] object-contain mb-4"
                 />
                 <div className="w-full flex gap-3">
-                  <div
-                    className={`${
-                      select === 0 ? "border-2 border-red-500" : ""
-                    } cursor-pointer`}
-                  >
-                    <img
-                      src={data?.image_Url?.[0]?.url}
-                      alt=""
-                      className="h-[100px] object-contain"
-                      onClick={() => setSelect(0)}
-                    />
-                  </div>
-                  <div
-                    className={`${
-                      select === 1 ? "border-2 border-red-500" : ""
-                    } cursor-pointer`}
-                  >
-                    <img
-                      src={data?.image_Url?.[1]?.url}
-                      alt=""
-                      className="h-[100px] object-contain"
-                      onClick={() => setSelect(1)}
-                    />
-                  </div>
+                  {data?.images?.map((i, index) => (
+                    <div
+                      key={index}
+                      className={`${
+                        select === index ? "border-2 border-red-500" : ""
+                      } cursor-pointer`}
+                      onClick={() => setSelect(index)}
+                    >
+                      <img
+                        src={`${backend_url}/${i}`}
+                        alt=""
+                        className="h-[100px] object-contain"
+                      />
+                    </div>
+                  ))}
                 </div>
               </div>
 
@@ -74,10 +77,10 @@ function ProductDetails({ data }) {
                 <p className="mb-3">{data.description}</p>
                 <div className="flex pt-3">
                   <h4 className={`${styles.productDiscountPrice}`}>
-                    ${data.discount_price}
+                    ${data.discountPrice}
                   </h4>
                   <h3 className={`${styles.price}`}>
-                    {data.price ? data.price + "$" : null}
+                    {data.originalPrice ? data.originalPrice + "$" : null}
                   </h3>
                 </div>
 
@@ -133,7 +136,8 @@ function ProductDetails({ data }) {
 
               <div className="flex items-center pt-8">
                 <img
-                  src={data.shop.shop_avatar.url}
+                  // src={data.shop.avatar}
+                  src={`${backend_url}/${data.shop.avatar}`}
                   alt=""
                   className="w-[50px] h-[50px] rounded-full mr-2"
                 />
@@ -142,7 +146,7 @@ function ProductDetails({ data }) {
                     {data.shop.name}
                   </h3>
                   <h5 className="pb-3 text-[15px]">
-                    ({data.shop.ratings}) Ratings
+                    ({data.shop.rating}) Ratings
                   </h5>
                 </div>
                 <div
@@ -156,7 +160,7 @@ function ProductDetails({ data }) {
               </div>
             </div>
           </div>
-          <ProductDetailsInfo data={data} />
+          <ProductDetailsInfo data={data} allProducts={allProducts} />
           <br />
           <br />
         </div>
@@ -165,7 +169,7 @@ function ProductDetails({ data }) {
   );
 }
 
-const ProductDetailsInfo = ({ data }) => {
+const ProductDetailsInfo = ({ data, allProducts }) => {
   const [active, setActive] = useState(1);
   return (
     <div className="bg-[#f5f6fb] px-3 800px:px-10 py-2 rounded ">
@@ -219,29 +223,7 @@ const ProductDetailsInfo = ({ data }) => {
       {active === 1 ? (
         <>
           <p className="py-2 text-[18px] leading-8 pb-10 whitespace-pre-line">
-            Experience comfort and style like never before with our
-            premium-quality product, crafted to meet your everyday needs.
-            Designed with attention to detail and built from durable materials,
-            this item blends modern aesthetics with practical functionality.
-            Whether you're shopping for yourself or looking for the perfect
-            gift, it's a choice that combines value, performance, and elegance —
-            all in one. Order now and elevate your lifestyle effortlessly!
-          </p>
-          <p className="py-2 text-[18px] leading-8 pb-10 whitespace-pre-line">
-            Upgrade your daily essentials with this high-quality product that
-            delivers reliability, style, and performance. Perfect for any
-            occasion, it's thoughtfully designed to offer maximum comfort and
-            durability. Whether at home, work, or on the go, this item
-            seamlessly fits into your lifestyle. Don’t miss out — add it to your
-            cart today and experience the difference!
-          </p>
-          <p className="py-2 text-[18px] leading-8 pb-10 whitespace-pre-line">
-            Upgrade your daily essentials with this high-quality product that
-            delivers reliability, style, and performance. Perfect for any
-            occasion, it's thoughtfully designed to offer maximum comfort and
-            durability. Whether at home, work, or on the go, this item
-            seamlessly fits into your lifestyle. Don’t miss out — add it to your
-            cart today and experience the difference!
+            {data.description}
           </p>
         </>
       ) : null}
@@ -253,54 +235,52 @@ const ProductDetailsInfo = ({ data }) => {
       {active === 3 && (
         <div className="w-full block 800px:flex p-5">
           <div className="w-full 800px:w-[50%]">
+            <Link to={`/shop/preview/${data.shop._id}`}>
             <div className="flex items-center">
               <img
-                src={data?.shop?.shop_avatar?.url}
+                // src={data?.shop?.avatar}
+                src={`${backend_url}/${data.shop.avatar}`}
                 className="w-[50px] h-[50px] rounded-full"
                 alt=""
               />
               <div className="pl-3">
                 <h3 className={`${styles.shop_name}`}>{data.shop.name}</h3>
-                <h5 className="pb-2 text-[15px]">
-                  [{data.shop.ratings}] Ratings
-                </h5>
+                <h5 className="pb-2 text-[15px]">(4/5) Ratings</h5>
               </div>
             </div>
+            </Link>
 
-            <p className="pt-2">
-              This product is sold by TechBazaar, a trusted seller known for
-              delivering high-quality items and excellent customer service. With
-              years of experience in the market, TechBazaar is committed to
-              ensuring customer satisfaction through fast shipping, responsive
-              support, and genuine products. Shop with confidence knowing you're
-              buying from a verified and reputable source.
-            </p>
+            <p className="pt-2">{data.shop.description}</p>
           </div>
 
           <div className="w-full 800px:w-[50%] mt-5 800px:mt-0 800px:flex flex:col items-end">
             <div className="text-left">
               <h5 className="font-[600]">
-              Joined on: <span className="font-[500]">6 August,2025</span>
+                Joined on:{" "}
+                <span className="font-[500]">
+                  {data.shop?.createdAt?.slice(0, 10)}
+                </span>
               </h5>
 
               <h5 className="font-[600] pt-3">
-              Total Products: <span className="font-[500]">1234</span>
+                Total Products:{" "}
+                <span className="font-[500]">
+                  {allProducts && allProducts.length}
+                </span>
               </h5>
 
               <h5 className="font-[600]">
-              Total Reviews: <span className="font-[500]">10</span>
+                Total Reviews: <span className="font-[500]">10</span>
               </h5>
 
               <Link to="/">
                 <div
-                className={`${styles.button} !rounded-[4px] !h-[39.5px] mt-3`}>
-                  <h4 className="text-white">
-                   Visit Shop
-                  </h4>
+                  className={`${styles.button} !rounded-[4px] !h-[39.5px] mt-3`}
+                >
+                  <h4 className="text-white">Visit Shop</h4>
                 </div>
               </Link>
             </div>
-
           </div>
         </div>
       )}

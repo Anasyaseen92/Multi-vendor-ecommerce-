@@ -17,20 +17,21 @@ router.post("/create-user", upload.single("file"), async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
 
+    // check if user exists
     const userEmail = await User.findOne({ email });
     if (userEmail) {
-      // Delete uploaded file if user already exists
+      // delete uploaded file if user already exists
       const filename = req.file?.filename;
       const filePath = `uploads/${filename}`;
       if (filename && fs.existsSync(filePath)) {
         fs.unlinkSync(filePath);
       }
-
       return next(new ErrorHandler("User already exists", 400));
     }
 
+    // ✅ Only save relative path with forward slashes
     const filename = req.file?.filename || "";
-    const fileUrl = filename ? path.join("uploads", filename) : "";
+    const fileUrl = filename ? `uploads/${filename}` : "";
 
     const user = {
       name,
@@ -40,7 +41,7 @@ router.post("/create-user", upload.single("file"), async (req, res, next) => {
     };
 
     // Create activation token
-    const activationToken = createActivationToken(seller);
+    const activationToken = createActivationToken(user); // 🔧 was `seller` before, fixed to `user`
     console.log("Activation token (copy for Postman):", activationToken);
     const activationUrl = `http://localhost:5173/activation/${activationToken}`;
 
