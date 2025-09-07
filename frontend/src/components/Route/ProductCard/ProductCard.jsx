@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styles from "../../../styles/styles";
 import ProductDetailsCard from "../ProductDetailsCard/ProductDetailsCard.jsx";
@@ -11,12 +11,34 @@ import {
   AiOutlineStar,
 } from "react-icons/ai";
 import { backend_url } from "../../../../server.js";
-
+import { useDispatch, useSelector } from "react-redux";
+import {removeFromWishlist} from "../../../redux/actions/wishlist"
+import { addToWishlist } from "../../../redux/actions/wishlist";
 const ProductCard = ({ data }) => {
   const [click, setClick] = useState(false);
   const [open, setOpen] = useState(false);
+  const dispatch = useDispatch();
+  const {wishlist} = useSelector((state) =>state.wishlist);
 
-  const productName = data.name.replace(/\s+/g, "-");
+  const d = data.name;
+
+  useEffect(() =>{
+    if(wishlist && wishlist.find((i) =>i._id === data._id)){
+      setClick(true);
+    }
+    else{
+      setClick(false);
+    }
+  },[wishlist]);
+  const removeFromWishlistHandler = (data) =>{
+    setClick(!click);
+    dispatch(removeFromWishlist(data))
+  }
+const addToWishlistHandler = (data) =>{
+  setClick(!click);
+  dispatch(addToWishlist(data))
+}
+
   return (
     <>
       <div className="w-full h-[370px] bg-white rounded-lg shadow-sm p-3 relative cursor-pointer">
@@ -69,7 +91,7 @@ const ProductCard = ({ data }) => {
             {click ? (
               <AiFillHeart
                 size={20}
-                onClick={() => setClick(!click)}
+                onClick={() => removeFromWishlistHandler(data)}
                 color="red"
                 title="Remove from wishlist"
                 className="cursor-pointer"
@@ -77,7 +99,7 @@ const ProductCard = ({ data }) => {
             ) : (
               <AiOutlineHeart
                 size={20}
-                onClick={() => setClick(!click)}
+                onClick={() => addToWishlistHandler(data)}
                 color="#fff"
                 title="Add to wishlist"
                 className="cursor-pointer"

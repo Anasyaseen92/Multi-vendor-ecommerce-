@@ -14,13 +14,15 @@ import { CgProfile } from "react-icons/cg";
 import { useSelector } from "react-redux";
 import { backend_url } from "../../../server";
 import Wishlist from "../Wishlist/Wishlist";
-import Cart from "../cart/Cart";
+//import Cart from "../cart/Cart";
 import { RxCross1 } from "react-icons/rx";
+import Cart from "../Cart/Cart";
 
 const Header = ({ activeHeading }) => {
   const { isAuthenticated, user } = useSelector((state) => state.user);
   const allProducts = useSelector((state) => state.products.allProducts);
-
+  const {cart} = useSelector((state) => state.cart);
+const {wishlist} = useSelector((state) =>state.wishlist)
   const [searchTerm, setSearchTerm] = useState("");
   const [searchData, setSearchData] = useState([]);
   const [active, setActive] = useState(false);
@@ -170,7 +172,7 @@ const Header = ({ activeHeading }) => {
                 >
                   <AiOutlineHeart size={30} color="rgb(255 255 255 / 83%)" />
                   <span className="absolute right-0 top-0 rounded-full bg-[#3bc177] w-4 h-4 text-white text-[12px] leading-tight text-center">
-                    0
+                    {wishlist && wishlist.length}
                   </span>
                 </div>
 
@@ -184,7 +186,7 @@ const Header = ({ activeHeading }) => {
                     color="rgb(255 255 255 / 83%)"
                   />
                   <span className="absolute right-0 top-0 rounded-full bg-[#3bc177] w-4 h-4 text-white text-[12px] leading-tight text-center">
-                    5
+                    {cart && cart.length}
                   </span>
                 </div>
 
@@ -241,7 +243,8 @@ const Header = ({ activeHeading }) => {
             <div className="relative mr-[20px]">
               <AiOutlineShoppingCart size={30} />
               <span className="absolute right-0 top-0 rounded-full bg-[#3bc177] w-4 h-4 text-white text-[12px] leading-tight text-center">
-                5
+                    {cart && cart.length}
+                
               </span>
             </div>
           </div>
@@ -253,7 +256,8 @@ const Header = ({ activeHeading }) => {
                 <div className="w-full justify-between flex pr-3">
                   <AiOutlineHeart size={30} className="mt-5 ml-3" />
                   <span className="absolute right-4 top-5 rounded-full bg-[#3bc177] w-4 h-4 text-white text-[12px] text-center">
-                    1
+                    {wishlist && wishlist.length}
+                    
                   </span>
                   <RxCross1
                     size={30}
