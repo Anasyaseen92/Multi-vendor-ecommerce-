@@ -14,14 +14,14 @@ import { backend_url } from "../../../../server.js";
 import { useDispatch, useSelector } from "react-redux";
 import {removeFromWishlist} from "../../../redux/actions/wishlist"
 import { addToWishlist } from "../../../redux/actions/wishlist";
+import { toast } from "react-toastify";
+import { addToCart } from "../../../redux/actions/cart.js";
 const ProductCard = ({ data }) => {
   const [click, setClick] = useState(false);
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
   const {wishlist} = useSelector((state) =>state.wishlist);
-
-  const d = data.name;
-
+  const {cart} = useSelector((state) =>state.cart);
   useEffect(() =>{
     if(wishlist && wishlist.find((i) =>i._id === data._id)){
       setClick(true);
@@ -37,6 +37,22 @@ const ProductCard = ({ data }) => {
 const addToWishlistHandler = (data) =>{
   setClick(!click);
   dispatch(addToWishlist(data))
+}
+const addCartToHandler =(id) =>{
+const isItemExists = cart && cart.find((i) =>i._id === id);
+if(isItemExists){
+  toast.error("item already in cart")
+}
+else{
+  if(data.stock < 1){
+    toast.error("Product stock limited!")
+  }
+  else{
+    const cartData = {...data,qty:1};
+    dispatch(addToCart(cartData));
+    toast.success("Item added to cart successfully!")
+  }
+}
 }
 
   return (
@@ -122,7 +138,7 @@ const addToWishlistHandler = (data) =>{
           <div className="bg-black/70 p-1 rounded-full shadow-md">
             <AiOutlineShoppingCart
               size={22}
-              onClick={() => setOpen(true)}
+              onClick={() => addCartToHandler(data._id)}
               color="#fff"
               title="Add to cart"
               className="cursor-pointer"

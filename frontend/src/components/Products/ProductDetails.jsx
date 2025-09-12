@@ -18,12 +18,19 @@ function ProductDetails({ data }) {
   const navigate = useNavigate();
 
   const allProducts = useSelector((state) => state.products.allProducts);
+  const {wishlist} = useSelector((state) =>state.wishlist);
 
   const dispatch = useDispatch();
   const { id } = useParams();
   useEffect(() => {
     dispatch(getAllProductsShop(id));
-  }, [dispatch]);
+      if(wishlist && wishlist.find((i) =>i._id === data?._id)){
+      setClick(true);
+    }
+    else{
+      setClick(false);
+    }
+  }, [dispatch,wishlist]);
 
   const incrementCount = () => {
     setCount(count + 1);
@@ -34,6 +41,31 @@ function ProductDetails({ data }) {
   const handleMessageSubmit = () => {
     navigate("/inbox?conversation=afsaojfnauiwefnasfk");
   };
+    const removeFromWishlistHandler = (data) =>{
+      setClick(!click);
+      dispatch(removeFromWishlist(data))
+    }
+  const addToWishlistHandler = (data) =>{
+    setClick(!click);
+    dispatch(addToWishlist(data))
+  }
+  const addCartToHandler =(id) =>{
+  const isItemExists = cart && cart.find((i) =>i._id === id);
+  if(isItemExists){
+    toast.error("item already in cart")
+  }
+  else{
+    if(data.stock < 1){
+      toast.error("Product stock limited!")
+    }
+    else{
+      const cartData = {...data,qty:count};
+      dispatch(addToCart(cartData));
+      toast.success("Item added to cart successfully!")
+    }
+  }
+  }
+  
   return (
     <div className="bg-white">
       {data ? (
@@ -110,7 +142,7 @@ function ProductDetails({ data }) {
                       <AiFillHeart
                         size={22}
                         className="cursor-pointer"
-                        onClick={() => setClick(!click)}
+                        onClick={() => removeFromWishlistHandler(data)}
                         color="red"
                         title="Remove from wishlist"
                       />
@@ -118,7 +150,7 @@ function ProductDetails({ data }) {
                       <AiOutlineHeart
                         size={22}
                         className="cursor-pointer"
-                        onClick={() => setClick(!click)}
+                        onClick={() => addToWishlistHandler(data)}
                         color="#333"
                         title="Add to wishlist"
                       />
@@ -128,6 +160,7 @@ function ProductDetails({ data }) {
               </div>
               <div
                 className={`${styles.button} mt-6 rounded h-11 flex items-center`}
+                onClick={() =>addCartToHandler(data._id)}
               >
                 <span className="text-white flex items-center">
                   Add to cart <AiOutlineShoppingCart />

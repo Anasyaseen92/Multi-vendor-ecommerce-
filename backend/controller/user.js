@@ -15,7 +15,7 @@ const { isAuthenticated } = require("../middleware/auth");
 // ========== Create User Route ==========
 router.post("/create-user", upload.single("file"), async (req, res, next) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password,} = req.body;
 
     // check if user exists
     const userEmail = await User.findOne({ email });
@@ -98,7 +98,7 @@ router.post(
     }
 
     try {
-      const user = await User.create({ name, email, avatar, password });
+      const user = await User.create({ name, email, avatar, password, });
       console.log("User created:", user);
       sendToken(user, 201, res);
       
@@ -171,4 +171,141 @@ router.get("/logout", isAuthenticated,catchAsyncErrors(async(req,res,next) =>{
   }
 }))
 
+//user info update
+router.put(
+  "/update-user-info",
+  isAuthenticated,
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const { email, password, phoneNumber, name } = req.body;
+
+      const user = await User.findOne({ email }).select("+password");
+
+      if (!user) {
+        return next(new ErrorHandler("User not found", 400));
+      }
+
+      const isPasswordValid = await user.comparePassword(password);
+
+      if (!isPasswordValid) {
+        return next(
+          new ErrorHandler("Please provide the correct information", 400)
+        );
+      }
+
+      user.name = name;
+      user.email = email;
+      user.phoneNumber = phoneNumber;
+
+      await user.save();
+
+      res.status(201).json({
+        success: true,
+        user,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
+
+//update user avatar
+router.put(
+  "/update-avatar",
+  isAuthenticated,
+  upload.single("avatar"), // multer middleware (field name: "avatar")
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const existsUser = await User.findById(req.user.id);
+
+      if (req.file) {
+        // delete old avatar file if exists (safe check)
+        if (existsUser.avatar) {
+          const oldPath = path.join(__dirname, "..", "uploads", existsUser.avatar);
+          if (fs.existsSync(oldPath)) {
+            fs.unlinkSync(oldPath);
+          }
+        }
+
+        // save new filename in DB
+        existsUser.avatar = req.file.filename;
+        await existsUser.save();
+      }
+
+      res.status(200).json({
+        success: true,
+        user: existsUser,
+      });
+    } catch (error) {
+      console.error("Update avatar error:", error);
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
+
+//update user address
+
+router.put(
+  "/update-user-addresses",
+  isAuthenticated,
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const user = await User.findById(req.user.id);
+
+      const sameTypeAddress = user.addresses.find(
+        (address) => address.addressType === req.body.addressType
+      );
+      if (sameTypeAddress) {
+        return next(
+          new ErrorHandler(`${req.body.addressType} address already exists`)
+        );
+      }
+
+      const existsAddress = user.addresses.find(
+        (address) => address._id === req.body._id
+      );
+
+      if (existsAddress) {
+        Object.assign(existsAddress, req.body);
+      } else {
+        // add the new address to the array
+        user.addresses.push(req.body);
+      }
+
+      await user.save();
+
+      res.status(200).json({
+        success: true,
+        user,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
+
+// delete user address
+router.delete(
+  "/delete-user-address/:id",
+  isAuthenticated,
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const userId = req.user._id;
+      const addressId = req.params.id;
+
+      await User.updateOne(
+        {
+          _id: userId,
+        },
+        { $pull: { addresses: { _id: addressId } } }
+      );
+
+      const user = await User.findById(userId);
+
+      res.status(200).json({ success: true, user });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
 module.exports = router;

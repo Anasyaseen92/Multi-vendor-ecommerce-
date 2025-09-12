@@ -20,6 +20,7 @@ const userSchema = new mongoose.Schema({
   },
   phoneNumber:{
     type: Number,
+    
   },
   addresses:[
     {
@@ -43,7 +44,7 @@ const userSchema = new mongoose.Schema({
       },
     }
   ],
-  role:{
+  role:{  
     type: String,
     default: "user",
   },
