@@ -217,7 +217,7 @@ const handleImage = async (e) => {
           onClick={() => setActive(6)}
           
           >
-            <PaymentMethod/>
+            <ChangePassword/>
             </div>
         )
       }
@@ -502,14 +502,14 @@ const TrackOrder = () =>{
   )
 }
 
-const PaymentMethod = () =>{
+const ChangePassword = () =>{
   return (
     <div className="w-full px-5">
       <div className="flex w-full items-center justify-between">
         <h1
         className="text-[25px] font-[600] text-[#000000ba] pb-2"
         >
-Payment Methods
+Change Password
         </h1>
         <div className={`${styles.button} !rounded-md`}>
           <span className="text-[#fff]">Add New</span>
