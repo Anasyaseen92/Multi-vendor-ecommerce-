@@ -5,9 +5,15 @@ import {
   CardExpiryElement,
 } from "@stripe/react-stripe-js";
 import styles from "../../styles/styles";
+import { useEffect } from "react";
 
-const PaymentInfo = ({ orderData }) => {
-  const [method, setMethod] = useState("card"); // default selected method
+const PaymentInfo = () => {
+  const [method, setMethod] = useState("card");
+  const [orderData, setOrderData] = useState([]);
+   useEffect(() => {
+    const orderData = JSON.parse(localStorage.getItem("latestOrder"));
+    setOrderData(orderData);
+  }, []);
 
   return (
     <div className="w-full flex flex-col items-center py-6 px-3 sm:px-6">
