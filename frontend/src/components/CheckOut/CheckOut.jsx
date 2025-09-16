@@ -42,7 +42,7 @@ const CheckOut = () => {
 
     const orderData = {
       cart,
-      totalPrice,
+      totalPrice: Number(totalPrice),
       subTotalPrice,
       shipping,
       discountPrice,
@@ -66,9 +66,9 @@ const CheckOut = () => {
 
   const discountPercentage = couponCodeData ? discountPrice : "";
 
-  const totalPrice = couponCodeData
-    ? (subTotalPrice + shipping - discountPercentage).toFixed(2)
-    : (subTotalPrice + shipping).toFixed(2);
+ const totalPrice = couponCodeData
+  ? subTotalPrice + shipping - discountPercentage
+  : subTotalPrice + shipping;
 
 
  const handleSubmit = async (e) => {

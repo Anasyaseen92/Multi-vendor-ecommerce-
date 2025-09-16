@@ -6,6 +6,7 @@ import ShopAllEvents from "../pages/Shop/ShopAllEvents"
 import ShopAllCoupouns from "../pages/Shop/ShopAllCoupouns"
 import ShopPreviewPage from "../pages/Shop/ShopPreviewPage";
 import PaymentPage from "../pages/PaymentPage";
+import OrderSuccessPage from "../pages/OrderSuccessPage";
 export {
-    ShopDashboardPage,ShopCreateProduct, ShopAllProducts,ShopCreateEvents,ShopAllEvents,ShopAllCoupouns,ShopPreviewPage,PaymentPage
+    ShopDashboardPage,ShopCreateProduct, ShopAllProducts,ShopCreateEvents,ShopAllEvents,ShopAllCoupouns,ShopPreviewPage,PaymentPage,OrderSuccessPage
 }
