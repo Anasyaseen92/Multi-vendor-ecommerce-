@@ -13,6 +13,6 @@ const storage = multer.diskStorage({
   },
 });
 
-// ✅ Correctly exported as `upload`
+
 const upload = multer({ storage: storage });
 module.exports = upload;
