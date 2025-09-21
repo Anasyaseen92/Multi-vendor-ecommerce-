@@ -3,27 +3,44 @@ import styles from "../../styles/styles";
 import { City, Country } from "country-state-city";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import axios from "axios";
+import { server } from "../../../server";
+
 
 const CheckOut = () => {
-  
   const { user } = useSelector((state) => state.user);
   const { cart } = useSelector((state) => state.cart);
+
   const [country, setCountry] = useState("");
   const [city, setCity] = useState("");
   const [userInfo, setUserInfo] = useState(false);
   const [address1, setAddress1] = useState("");
   const [address2, setAddress2] = useState("");
-  const [zipCode, setZipCode] = useState(null);
+  const [zipCode, setZipCode] = useState(""); // ✅ fix: no null
   const [couponCode, setCouponCode] = useState("");
   const [couponCodeData, setCouponCodeData] = useState(null);
   const [discountPrice, setDiscountPrice] = useState(null);
+
   const navigate = useNavigate();
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-   const orderData = {
+  const paymentSubmit = () => {
+   if(address1 === "" || address2 === "" || zipCode === null || country === "" || city === ""){
+      toast.error("Please choose your delivery address!")
+   } else{
+    const shippingAddress = {
+      address1,
+      address2,
+      zipCode,
+      country,
+      city,
+    };
+
+    const orderData = {
       cart,
       totalPrice,
       subTotalPrice,
@@ -33,24 +50,74 @@ const CheckOut = () => {
       user,
     }
 
-      const subTotalPrice = cart.reduce(
+    // update local storage with the updated orders array
+    localStorage.setItem("latestOrder", JSON.stringify(orderData));
+    navigate("/payment");
+   }
+  };
+
+
+  const subTotalPrice = cart.reduce(
     (acc, item) => acc + item.qty * item.discountPrice,
     0
   );
 
-  // this is shipping cost variable
   const shipping = subTotalPrice * 0.1;
 
-    const discountPercentenge = couponCodeData ? discountPrice : "";
+  const discountPercentage = couponCodeData ? discountPrice : "";
 
   const totalPrice = couponCodeData
-    ? (subTotalPrice + shipping - discountPercentenge).toFixed(2)
+    ? (subTotalPrice + shipping - discountPercentage).toFixed(2)
     : (subTotalPrice + shipping).toFixed(2);
 
 
-    const handleSubmit = () =>{
-      e.preventDefault();
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  if (!couponCode) {
+    toast.error("Please enter a coupon code");
+    return;
+  }
+
+  try {
+    const { data } = await axios.get(
+      `${server}/coupon/get-coupon-value/${couponCode}`
+    );
+
+    const coupon = data?.couponCode;
+
+    if (!coupon) {
+      toast.error("Coupon code doesn't exist!");
+      return;
     }
+
+    // check if coupon applies to products in this cart
+    const isCouponValid = cart.filter((item) => item.shopId === coupon.shopId);
+
+    if (isCouponValid.length === 0) {
+      toast.error("Coupon code is not valid for this shop");
+      return;
+    }
+
+    const eligiblePrice = isCouponValid.reduce(
+      (acc, item) => acc + item.qty * item.discountPrice,
+      0
+    );
+
+    const discount = (eligiblePrice * coupon.value) / 100;
+
+    setDiscountPrice(discount);
+    setCouponCodeData(coupon);
+
+    toast.success(`Coupon applied! You saved $${discount.toFixed(2)}`);
+  } catch (error) {
+    toast.error(
+      error.response?.data?.message || "Something went wrong while applying coupon"
+    );
+  }
+};
+
+
   return (
     <div className="w-full flex flex-col items-center py-6 px-3 sm:px-6">
       <div className="w-full lg:w-[85%] xl:w-[70%] flex flex-col md:flex-row gap-6">
@@ -76,19 +143,19 @@ const CheckOut = () => {
         {/* Cart Data */}
         <div className="w-full md:w-[35%]">
           <CartData
-      handleSubmit={handleSubmit}
+            handleSubmit={handleSubmit}
             totalPrice={totalPrice}
             shipping={shipping}
             subTotalPrice={subTotalPrice}
             couponCode={couponCode}
             setCouponCode={setCouponCode}
-            discountPercentenge={discountPercentenge}
+            discountPercentage={discountPercentage}
           />
         </div>
       </div>
 
       {/* Payment Button */}
-      <div className={`${styles.button} w-[180px] md:w-[260px] mt-8`}>
+      <div className={`${styles.button} w-[180px] md:w-[260px] mt-8`}  onClick={paymentSubmit}>
         <h5 className="text-white text-center">Go to Payment</h5>
       </div>
     </div>
@@ -97,7 +164,6 @@ const CheckOut = () => {
 
 // ================= SHIPPING INFO =================
 const ShippingInfo = ({
- 
   user,
   country,
   setCountry,
@@ -111,7 +177,6 @@ const ShippingInfo = ({
   setAddress2,
   zipCode,
   setZipCode,
-
 }) => {
   return (
     <div className="w-full bg-white p-5 rounded-md shadow-md">
@@ -123,19 +188,19 @@ const ShippingInfo = ({
           <div className="flex-1">
             <label className="block text-sm">Full Name</label>
             <input
-            value={user && user.name}
+              value={user?.name || ""}
               type="text"
-              placeholder="Enter your name"
-              className={`${styles.input} w-full`}
+              readOnly // ✅ not editable, avoid warning
+              className={`${styles.input} w-full bg-gray-100 cursor-not-allowed`}
             />
           </div>
           <div className="flex-1">
             <label className="block text-sm">Email</label>
             <input
-             value={user && user.email}
+              value={user?.email || ""}
               type="email"
-              placeholder="Enter your email"
-              className={`${styles.input} w-full`}
+              readOnly
+              className={`${styles.input} w-full bg-gray-100 cursor-not-allowed`}
             />
           </div>
         </div>
@@ -145,10 +210,10 @@ const ShippingInfo = ({
           <div className="flex-1">
             <label className="block text-sm">Phone Number</label>
             <input
-            value={user && user.phoneNumber}
+              value={user?.phoneNumber || ""}
               type="number"
-              placeholder="Enter phone number"
-              className={`${styles.input} w-full`}
+              readOnly
+              className={`${styles.input} w-full bg-gray-100 cursor-not-allowed`}
             />
           </div>
           <div className="flex-1">
@@ -189,7 +254,7 @@ const ShippingInfo = ({
             >
               <option value="">Choose your city</option>
               {City.getCitiesOfCountry(country).map((item) => (
-                <option key={item.name} value={item.name}>
+                <option key={`${item.name}-${item.stateCode}`} value={item.name}>
                   {item.name}
                 </option>
               ))}
@@ -221,7 +286,8 @@ const ShippingInfo = ({
           </div>
         </div>
       </form>
-       {/* Saved addresses toggle */}
+
+      {/* Saved addresses toggle */}
       <h5
         className="text-[15px] text-blue-600 cursor-pointer mt-2"
         onClick={() => setUserInfo(!userInfo)}
@@ -231,7 +297,7 @@ const ShippingInfo = ({
 
       {userInfo && (
         <div className="mt-3 space-y-2">
-          {user.addresses.map((item, index) => (
+          {user?.addresses?.map((item, index) => (
             <label
               key={index}
               className="flex items-center gap-2 cursor-pointer"
@@ -281,7 +347,9 @@ const CartData = ({
 
       <div className="flex justify-between text-sm sm:text-base">
         <h3 className="text-gray-600">Discount:</h3>
-        <h5 className="font-semibold"> - {discountPercentage ? "$" + discountPercentage.toString() : null}</h5>
+        <h5 className="font-semibold">
+          - {discountPercentage ? "$" + discountPercentage.toString() : null}
+        </h5>
       </div>
 
       <div className="flex justify-between border-t pt-3 text-sm sm:text-base">
@@ -290,7 +358,7 @@ const CartData = ({
       </div>
 
       {/* Coupon form */}
-      <form className="flex flex-col sm:flex-row gap-3 mt-2">
+      <form className="flex flex-col sm:flex-row gap-3 mt-2" onSubmit={handleSubmit}>
         <input
           type="text"
           className={`${styles.input} flex-1 h-[40px]`}
