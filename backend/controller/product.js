@@ -5,6 +5,8 @@ const Shop = require("../model/shop");
 const upload = require("../multer");
 const catchAsyncErrors = require("../middleware/catchAsyncErrors");
 const ErrorHandler = require("../utils/ErrorHandler");
+const {isAuthenticated} = require("../middleware/auth")
+const Order = require("../model/order");
 const fs = require("fs");
 //const {isSeller} = require("../middleware/auth")
 // create product
@@ -111,6 +113,84 @@ router.get("/get-all-products", catchAsyncErrors( async(req,res,next) =>{
   }
 }))
 
+// review for a product
+
+router.put(
+  "/create-new-review",
+  isAuthenticated,
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const { rating, comment, productId, orderId } = req.body;
+
+      // ✅ Basic validation
+      if (!productId || !orderId || typeof rating === "undefined") {
+        return next(new ErrorHandler("Missing required fields", 400));
+      }
+
+      // ✅ Find product
+      const product = await Product.findById(productId);
+      if (!product) return next(new ErrorHandler("Product not found", 404));
+
+      // ✅ Build consistent review user object (always from logged-in user)
+      const reviewUser = {
+        _id: req.user._id,
+        name: req.user.name || "Anonymous",
+        avatar: req.user.avatar || "", // ✅ make sure avatar comes from user model
+      };
+
+      const newReview = {
+        user: reviewUser,
+        rating: Number(rating),
+        comment: comment || "",
+        productId,
+      };
+
+      // ✅ Check if already reviewed
+      const existingReviewIndex = product.reviews.findIndex(
+        (rev) => String(rev.user._id) === String(req.user._id)
+      );
+
+      if (existingReviewIndex !== -1) {
+        // ✅ Update existing review
+        product.reviews[existingReviewIndex] = {
+          ...product.reviews[existingReviewIndex].toObject
+            ? product.reviews[existingReviewIndex].toObject()
+            : product.reviews[existingReviewIndex],
+          ...newReview,
+        };
+      } else {
+        // ✅ Add new review
+        product.reviews.push(newReview);
+      }
+
+      // ✅ Recalculate average rating
+      const total = product.reviews.reduce(
+        (sum, rev) => sum + Number(rev.rating || 0),
+        0
+      );
+      product.ratings = product.reviews.length
+        ? total / product.reviews.length
+        : 0;
+
+      await product.save({ validateBeforeSave: false });
+
+      // ✅ Mark order item as reviewed
+      await Order.updateOne(
+        { _id: orderId, "cart.productId": productId },
+        { $set: { "cart.$.isReviewed": true } }
+      );
+
+      return res.status(200).json({
+        success: true,
+        message: "Reviewed successfully!",
+        reviews: product.reviews, // ✅ send back updated reviews to frontend
+      });
+    } catch (error) {
+      console.error("create-new-review error:", error);
+      return next(new ErrorHandler(error.message || "Server Error", 500));
+    }
+  })
+);
 
 
 module.exports = router;

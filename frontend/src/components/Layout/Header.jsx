@@ -22,6 +22,7 @@ const Header = ({ activeHeading }) => {
   const { isAuthenticated, user } = useSelector((state) => state.user);
   const allProducts = useSelector((state) => state.products.allProducts);
   const {cart} = useSelector((state) => state.cart);
+  const {isSeller} = useSelector((state) => state.seller);
 const {wishlist} = useSelector((state) =>state.wishlist)
   const [searchTerm, setSearchTerm] = useState("");
   const [searchData, setSearchData] = useState([]);
@@ -131,7 +132,7 @@ const {wishlist} = useSelector((state) =>state.wishlist)
               <div className="hidden md:block bg-blue-600 px-4 py-2 rounded-md">
                 <Link to="/shop-create">
                   <span className="text-white flex items-center">
-                    Become Seller <IoIosArrowForward className="ml-1" />
+                    {isSeller ? "Dashboard" : "Become a Seller"} <IoIosArrowForward className="ml-1" />
                   </span>
                 </Link>
               </div>

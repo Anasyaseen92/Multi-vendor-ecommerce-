@@ -20,6 +20,7 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { RxCross1 } from "react-icons/rx";
 import { Country, State, City } from "country-state-city";
+import { getAllOrdersOfUser } from "../../redux/actions/order";
 function ProfileContent({ active, setActive }) {
   const { user, error, successMessage } = useSelector((state) => state.user);
   const [name, setName] = useState(user && user.name);
@@ -210,18 +211,13 @@ function ProfileContent({ active, setActive }) {
   );
 }
 const AllOrders = () => {
-  const orders = [
-    {
-      _id: "7463hvbbfhrtr28820221",
-      orderItems: [
-        {
-          name: "Iphone 14 pro max",
-        },
-      ],
-      totalPrice: 120,
-      orderStatus: "Processing",
-    },
-  ];
+  const {orders} = useSelector((state) => state.order);
+  const {user} = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+dispatch(getAllOrdersOfUser(user._id))
+  })
   const columns = [
     { field: "id", headerName: "Order ID", minWidth: 150, flex: 0.7 },
 
@@ -278,7 +274,7 @@ const AllOrders = () => {
       row.push({
         id: item._id,
 
-        itemsQty: item.orderItems.length,
+        itemsQty: item.cart.length,
 
         total: "US$ " + item.totalPrice,
         status: item.status,
@@ -291,24 +287,20 @@ const AllOrders = () => {
         columns={columns}
         pageSize={10}
         disableSelectionOnClick
-        autoHeight
-      />
+              />
     </div>
   );
 };
 const AllRefundOrders = () => {
-  const orders = [
-    {
-      _id: "7463hvbbfhrtr28820221",
-      orderItems: [
-        {
-          name: "Iphone 14 pro max",
-        },
-      ],
-      totalPrice: 120,
-      orderStatus: "Processing",
-    },
-  ];
+  const {orders} = useSelector((state) => state.order);
+  const {user} = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+dispatch(getAllOrdersOfUser(user._id))
+  })
+
+  const eligibleOrder = orders && orders.filter((item) =>item.status === "Processing refund")
   const columns = [
     { field: "id", headerName: "Order ID", minWidth: 150, flex: 0.7 },
 
@@ -357,14 +349,15 @@ const AllRefundOrders = () => {
       },
     },
   ];
+
   const row = [];
 
-  orders &&
-    orders.forEach((item) => {
+ eligibleOrder &&
+    eligibleOrder.forEach((item) => {
       row.push({
         id: item._id,
 
-        itemsQty: item.orderItems.length,
+        itemsQty: item.cart.length,
 
         total: "US$ " + item.totalPrice,
         status: item.status,
@@ -384,18 +377,15 @@ const AllRefundOrders = () => {
   );
 };
 const TrackOrder = () => {
-  const orders = [
-    {
-      _id: "7463hvbbfhrtr28820221",
-      orderItems: [
-        {
-          name: "Iphone 14 pro max",
-        },
-      ],
-      totalPrice: 120,
-      orderStatus: "Processing",
-    },
-  ];
+   const {orders} = useSelector((state) => state.order);
+  const {user} = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+dispatch(getAllOrdersOfUser(user._id))
+  })
+
+  const eligibleOrder = orders && orders.filter((item) =>item.status === "Processing refund")
   const columns = [
     { field: "id", headerName: "Order ID", minWidth: 150, flex: 0.7 },
 
@@ -447,16 +437,23 @@ const TrackOrder = () => {
 
   const row = [];
 
-  orders &&
-    orders.forEach((item) => {
+ eligibleOrder &&
+    eligibleOrder.forEach((item) => {
       row.push({
         id: item._id,
 
-        itemsQty: item.orderItems.length,
+        itemsQty: item.cart.length,
+
         total: "US$ " + item.totalPrice,
         status: item.status,
       });
     });
+
+ 
+
+ 
+
+
   return (
     <div className="pl-8 pt-1">
       <DataGrid

@@ -16,6 +16,7 @@ import {removeFromWishlist} from "../../../redux/actions/wishlist"
 import { addToWishlist } from "../../../redux/actions/wishlist";
 import { toast } from "react-toastify";
 import { addToCart } from "../../../redux/actions/cart.js";
+import Ratings from "../../Products/Ratings.jsx";
 const ProductCard = ({ data }) => {
   const [click, setClick] = useState(false);
   const [open, setOpen] = useState(false);
@@ -77,10 +78,7 @@ else{
           </h4>
 
           <div className="flex">
-            {[1, 2, 3, 4].map((_, i) => (
-              <AiFillStar key={i} className="mr-1 text-yellow-400" size={20} />
-            ))}
-            <AiOutlineStar className="text-yellow-400" size={20} />
+           <Ratings rating={data?.ratings}/>
           </div>
 
           <div className="py-2  items-center justify-between">

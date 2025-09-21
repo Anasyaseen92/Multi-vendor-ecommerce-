@@ -7,16 +7,19 @@ import {
   AiOutlineMessage,
   AiOutlineShoppingCart,
 } from "react-icons/ai";
-import { backend_url } from "../../../server";
+import { backend_url, server } from "../../../server";
 import { getAllProductsShop } from "../../redux/actions/product";
 import { useDispatch, useSelector } from "react-redux";
+import Ratings from "./Ratings";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 function ProductDetails({ data }) {
   const [count, setCount] = useState(1);
   const [click, setClick] = useState(false);
   const [select, setSelect] = useState(0);
   const navigate = useNavigate();
-
+const {user, isAuthenticated} = useSelector((state) => state.user);
   const allProducts = useSelector((state) => state.products.allProducts);
   const {wishlist} = useSelector((state) =>state.wishlist);
 
@@ -38,8 +41,26 @@ function ProductDetails({ data }) {
   const decrementCount = () => {
     setCount(count - 1);
   };
-  const handleMessageSubmit = () => {
-    navigate("/inbox?conversation=afsaojfnauiwefnasfk");
+  const handleMessageSubmit = async () => {
+    if (isAuthenticated) {
+      const groupTitle = data._id + user._id;
+      const userId = user._id;
+      const sellerId = data.shop._id;
+      await axios
+        .post(`${server}/conversation/create-new-conversation`, {
+          groupTitle,
+          userId,
+          sellerId,
+        })
+        .then((res) => {
+          navigate(`/inbox?${res.data.conversation._id}`);
+        })
+        .catch((error) => {
+          toast.error(error.response.data.message);
+        });
+    } else {
+      toast.error("Please login to create a conversation");
+    }
   };
     const removeFromWishlistHandler = (data) =>{
       setClick(!click);
@@ -65,7 +86,20 @@ function ProductDetails({ data }) {
     }
   }
   }
-  
+
+  const totalReviewsLength =
+  allProducts?.reduce((acc, product) => acc + product.reviews.length, 0) || 0;
+
+const totalRatings =
+  allProducts?.reduce(
+    (acc, product) =>
+      acc + product.reviews.reduce((sum, review) => sum + review.rating, 0),
+    0
+  ) || 0;
+
+const averageRating =
+  totalReviewsLength > 0 ? (totalRatings / totalReviewsLength).toFixed(1) : 0;
+
   return (
     <div className="bg-white">
       {data ? (
@@ -193,7 +227,7 @@ function ProductDetails({ data }) {
               </div>
             </div>
           </div>
-          <ProductDetailsInfo data={data} allProducts={allProducts} />
+          <ProductDetailsInfo data={data} allProducts={allProducts} totalReviewsLength={totalReviewsLength} averageRating={averageRating}  />
           <br />
           <br />
         </div>
@@ -202,7 +236,7 @@ function ProductDetails({ data }) {
   );
 }
 
-const ProductDetailsInfo = ({ data, allProducts }) => {
+const ProductDetailsInfo = ({ data, allProducts , totalReviewsLength,averageRating}) => {
   const [active, setActive] = useState(1);
   return (
     <div className="bg-[#f5f6fb] px-3 800px:px-10 py-2 rounded ">
@@ -260,11 +294,42 @@ const ProductDetailsInfo = ({ data, allProducts }) => {
           </p>
         </>
       ) : null}
-      {active === 2 ? (
-        <div className="w-full justify-center min-h-[40vh] flex items-center ">
-          <p>No Reviews yet!</p>
+      
+{/* Review list */}
+  {/* Review list */}
+{active === 2 ? (
+  <div className="w-full min-h-[40vh] flex flex-col items-center py-3 overflow-y-scroll">
+    {data?.reviews && data.reviews.length > 0 ? (
+      data.reviews.map((item, index) => (
+        <div key={item._id || index} className="w-full flex my-2">
+          <img
+            src={
+              item?.user?.avatar
+                ? `${backend_url}/${item.user.avatar}`
+                : "/default-avatar.png" // ✅ fallback if no avatar
+            }
+            alt="user avatar"
+            className="w-[50px] h-[50px] rounded-full object-cover"
+          />
+          <div className="pl-2">
+            <div className="w-full flex items-center">
+              <h1 className="font-[500] mr-3">
+                {item?.user?.name || "Anonymous"}
+              </h1>
+              <Ratings rating={item?.rating || 0} />
+            </div>
+            <p>{item?.comment || "No comment provided."}</p>
+          </div>
         </div>
-      ) : null}
+      ))
+    ) : (
+      <h5>No Reviews have for this product!</h5>
+    )}
+  </div>
+) : null}
+
+
+
       {active === 3 && (
         <div className="w-full block 800px:flex p-5">
           <div className="w-full 800px:w-[50%]">
@@ -278,7 +343,7 @@ const ProductDetailsInfo = ({ data, allProducts }) => {
               />
               <div className="pl-3">
                 <h3 className={`${styles.shop_name}`}>{data.shop.name}</h3>
-                <h5 className="pb-2 text-[15px]">(4/5) Ratings</h5>
+                <h5 className="pb-2 text-[15px]">({averageRating}/5) Ratings</h5>
               </div>
             </div>
             </Link>
@@ -303,7 +368,7 @@ const ProductDetailsInfo = ({ data, allProducts }) => {
               </h5>
 
               <h5 className="font-[600]">
-                Total Reviews: <span className="font-[500]">10</span>
+                Total Reviews: <span className="font-[500]">{totalReviewsLength}</span>
               </h5>
 
               <Link to="/">

@@ -7,6 +7,7 @@ import { productReducer } from "./reducers/product.js";
 import { eventReducer } from "./reducers/event.js";
 import { cartReducer } from "./reducers/cart.js";
 import { wishlistReducer } from "./reducers/wishlist.js";
+import { orderReducer } from "./reducers/order.js";
 
 const rootReducer = combineReducers({
   user: userReducer,
@@ -15,6 +16,7 @@ const rootReducer = combineReducers({
   events: eventReducer,
   cart: cartReducer,
   wishlist: wishlistReducer,
+  order: orderReducer,
 });
 
 // config for persist

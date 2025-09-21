@@ -4,7 +4,7 @@ import styles from "../../styles/styles";
 import { useDispatch, useSelector} from "react-redux";
 import axios from "axios";
 import { getAllProductsShop } from "../../redux/actions/product";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 function ShopInfo({ isOwner }) {
   const allProducts = useSelector((state) => state.products.allProducts);
@@ -12,9 +12,12 @@ const [data, setData] = useState({});
 const [isLoading, setIsLoading] = useState(false);
 
   const { id } = useParams();
-  //const dispatch = useDispatch();
+  const dispatch = useDispatch();
+
+ 
 
   useEffect(() => {
+      dispatch(getAllProductsShop(id));
     setIsLoading(true);
 axios.get(`${server}/seller/get-shop-info/${id}`).then((res) =>{
      console.log("Shop API Response:", res.data);
@@ -30,6 +33,19 @@ axios.get(`${server}/seller/get-shop-info/${id}`).then((res) =>{
     await axios.get(`${server}/seller/logout`, { withCredentials: true });
     window.location.reload();
   };
+
+   const totalReviewsLength =
+  allProducts?.reduce((acc, product) => acc + product.reviews.length, 0) || 0;
+
+const totalRatings =
+  allProducts?.reduce(
+    (acc, product) =>
+      acc + product.reviews.reduce((sum, review) => sum + review.rating, 0),
+    0
+  ) || 0;
+
+const averageRating =
+  totalReviewsLength > 0 ? (totalRatings / totalReviewsLength).toFixed(1) : 0;
   return (
     <div>
       <div className="w-full py-5">
@@ -58,12 +74,12 @@ axios.get(`${server}/seller/get-shop-info/${id}`).then((res) =>{
 
       <div className="p-3">
         <h5 className="font-[600]">Total Products</h5>
-        <h4 className="text-[#000000a6]">10</h4>
+        <h4 className="text-[#000000a6]">{allProducts && allProducts.length-1}</h4>
       </div>
 
       <div className="p-3">
         <h5 className="font-[600]">Shop Ratings</h5>
-        <h4 className="text-[#000000a6]">4.1/5</h4>
+        <h4 className="text-[#000000a6]">{averageRating}/5</h4>
       </div>
 
       <div className="p-3">
@@ -72,9 +88,11 @@ axios.get(`${server}/seller/get-shop-info/${id}`).then((res) =>{
       </div>
       {isOwner && (
         <div className="py-3 px-4">
+          <Link to="/settings">
           <div className={`${styles.button} !w-full !h-[42px] !rounded-[5px]`}>
             <span className="text-white">Edit Shop</span>
           </div>
+          </Link>
           <div
             onClick={logoutHandler}
             className={`${styles.button} !w-full !h-[42px] !rounded-[5px]`}
