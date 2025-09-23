@@ -8,7 +8,6 @@ import {
   AiOutlineShoppingCart,
 } from "react-icons/ai";
 import { Link } from "react-router-dom";
-import { backend_url } from "../../../../server";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { addToCart } from "../../../redux/actions/cart";
@@ -77,14 +76,14 @@ const addToWishlistHandler = (data) =>{
               <div className="w-full md:w-[50%]">
                 <img
              
-                  src={`${backend_url}/${data?.images?.[0] || "default-image.png"}`}
+                  src={`${data?.images[0] || "default-image.png"}`}
                   alt={data.name}
                   className="w-full object-contain"
                 />
                 <Link to={`/shop/preview/${data.shop._id}`} className="flex mt-4 items-center">
                   <img
                   
-                  src={`${backend_url}/${data?.shop.avatar|| "default-image.png"}`}
+                  src={`${data?.shop.avatar|| "default-image.png"}`}
 
                     alt={data.shop.name}
                     className="w-[50px] h-[50px] rounded-full mr-2"

@@ -3,7 +3,7 @@ import { BsFillBagFill } from "react-icons/bs";
 import { Link, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 //import { getAllOrdersOfUser } from "../redux/actions/order";
-import { backend_url, server } from "../../../server";
+import {  server } from "../../../server";
 import { RxCross1 } from "react-icons/rx";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import axios from "axios";
@@ -91,7 +91,7 @@ const UserOrderDetails = () => {
           <div className="w-full flex items-start mb-5">
             <img
             
-                src={`${backend_url}/${selectedItem?.images[0]}`}
+                src={`${selectedItem?.images[0]}`}
 
               alt=""
               className="w-[80x] h-[80px]"
@@ -131,7 +131,7 @@ const UserOrderDetails = () => {
             <br />
             <div className="w-full flex">
               <img
-                src={`${backend_url}/${selectedItem?.images[0]}`}
+                src={`${selectedItem?.images[0]}`}
                 alt=""
                 className="w-[80px] h-[80px]"
               />

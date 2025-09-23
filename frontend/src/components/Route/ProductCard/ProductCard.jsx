@@ -10,7 +10,6 @@ import {
   AiOutlineShoppingCart,
   AiOutlineStar,
 } from "react-icons/ai";
-import { backend_url } from "../../../../server.js";
 import { useDispatch, useSelector } from "react-redux";
 import {removeFromWishlist} from "../../../redux/actions/wishlist"
 import { addToWishlist } from "../../../redux/actions/wishlist";
@@ -62,7 +61,7 @@ else{
         <Link to={ `/product/${data._id}`}>
           <img
          
-            src={`${backend_url}/${data?.images?.[0] || "default-image.png"}`}
+            src={`${data?.images[0]}`}
             className="w-full h-[170px] object-contain"
             alt={data.name}
           />

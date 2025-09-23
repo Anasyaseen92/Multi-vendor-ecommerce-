@@ -1,17 +1,29 @@
 import React from "react";
 import CountDown from "./CountDown.jsx";
 import styles from "../../styles/styles.js";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { backend_url } from "../../../server.js";
+import { toast } from "react-toastify";
 
 const EventPage = ({ data }) => {
+  const { cart } = useSelector((state) => state.cart);
   const dispatch = useDispatch();
 
-  const addToCartHandler = (item) => {
-    console.log("Adding to cart:", item);
   
-  };
+  const addToCartHandler = (data) => {
+    const isItemExists = cart && cart.find((i) => i._id === data._id);
+    if (isItemExists) {
+      toast.error("Item already in cart!");
+    } else {
+      if (data.stock < 1) {
+        toast.error("Product stock limited!");
+      } else {
+        const cartData = { ...data, qty: 1 };
+        dispatch(addTocart(cartData));
+        toast.success("Item added to cart successfully!");
+      }
+    }
+  }
 
   return (
     <div className="w-full  bg-white p-6 md:p-10">
@@ -20,7 +32,7 @@ const EventPage = ({ data }) => {
         {/* Left Side - Image */}
         <div className="w-full md:w-1/2 flex justify-center items-center">
           <img
-            src={`${backend_url}/${data?.images?.[0] || "default-image.png"}`}
+            src={`${data?.images[0] || "default-image.png"}`}
             alt={data?.name || "Event Image"}
             className="w-full max-w-[500px] max-h-[450px] object-contain rounded-xl shadow"
           />

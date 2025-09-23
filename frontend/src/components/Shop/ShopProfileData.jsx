@@ -6,7 +6,6 @@ import { getAllEventsShop } from "../../redux/actions/event";
 import styles from "../../styles/styles";
 import ProductCard from "../Route/ProductCard/ProductCard";
 import Ratings from "../Products/Ratings";
-import { backend_url } from "../../../server";
 
 const ShopProfileData = ({ isOwner }) => {
   const { allProducts } = useSelector((state) => state.products);
@@ -119,7 +118,7 @@ const ShopProfileData = ({ isOwner }) => {
                 <img
                   src={
                     item?.user?.avatar
-                      ? `${backend_url}/${item.user.avatar}`
+                      ? `${item.user.avatar}`
                       : "/default-avatar.png" // ✅ fallback if no avatar
                   }
                   className="w-[50px] h-[50px] rounded-full"

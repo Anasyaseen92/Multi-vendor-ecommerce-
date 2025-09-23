@@ -5,7 +5,6 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { FiPackage, FiShoppingBag } from "react-icons/fi";
 import { BiMessageSquareDetail } from "react-icons/bi";
-import { backend_url } from "../../../../server";
 
 function DashboardHeader() {
   const { seller } = useSelector((state) => state.seller);
@@ -49,7 +48,7 @@ function DashboardHeader() {
           {seller && (
             <Link to={`/shop/${seller._id}`}>
               <img
-                src={`${backend_url}/${seller?.avatar}`}
+                src={`${seller?.avatar}`}
                 alt=""
                 className="w-[40px] h-[40px] md:w-[50px] md:h-[50px] rounded-full object-cover"
               />

@@ -4,7 +4,6 @@ import { IoBagHandleOutline } from "react-icons/io5";
 import { HiPlus, HiOutlineMinus } from "react-icons/hi";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { backend_url } from "../../../server";
 import {  addToCart, removeFromCart } from "../../redux/actions/cart";
 import { toast } from "react-toastify";
 
@@ -114,7 +113,8 @@ const updateCartData = { ...data, qty: value + 1 };
 
         {/* Product Image */}
         <img
-          src={`${backend_url}/${data?.images[0]}`}
+        
+           src={`${data?.images[0]}`}
           alt=""
           className="w-[60px] h-[60px] object-cover rounded-md"
         />

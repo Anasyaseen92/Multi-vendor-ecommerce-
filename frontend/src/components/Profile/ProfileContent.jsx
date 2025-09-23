@@ -3,7 +3,6 @@ import {
   AiOutlineCamera,
   AiOutlineDelete,
 } from "react-icons/ai";
-import { backend_url, server } from "../../../server";
 import { useDispatch, useSelector } from "react-redux";
 import styles from "../../styles/styles";
 import { useEffect, useState } from "react";
@@ -35,7 +34,6 @@ function ProfileContent({ active, setActive }) {
       dispatch({ type: "clearErrors" });
     }
     if (successMessage) {
-      toast.success(successMessage);
       dispatch({ type: "clearErrors" });
     }
   }, [error, successMessage]);
@@ -81,7 +79,7 @@ function ProfileContent({ active, setActive }) {
             <div className="relative">
               <img
                 className="rounded-full w-[150px] h-[150px] object-cover border-[3px] border-blue-700"
-                src={`${backend_url}/${user?.avatar}`}
+                src={`${user?.avatar}`}
                 alt=""
               />
               <div className="w-[30px] h-[30px] bg-white rounded-full flex items-center justify-center cursor-pointer absolute bottom-[5px] right-[5px]">

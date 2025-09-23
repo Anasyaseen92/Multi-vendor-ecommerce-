@@ -1,12 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { RxCross1 } from "react-icons/rx";
-import { IoBagHandleOutline } from "react-icons/io5";
 import {BsCartPlus} from "react-icons/bs"
-import { Link } from "react-router-dom";
 import { AiOutlineHeart } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import {removeFromWishlist} from "../../redux/actions/wishlist"
-import { backend_url } from "../../../server";
 import { addToCart } from "../../redux/actions/cart";
 // Sample product data
 
@@ -58,7 +55,7 @@ const CartSingle = ({ data , removeFromWishlistHandler, addToCartHandler}) => {
       <div className='w-full flex items-center gap-2'>
         <RxCross1 className="cursor-pointer" onClick={() =>{removeFromWishlistHandler(data)}}/>
         <img
-          src={`${backend_url}/${data?.images[0]}`}
+          src={`${data?.images[0]}`}
           alt=''
           className='w-[60px] h-[60px] object-cover rounded-md'
         />

@@ -12,11 +12,11 @@ import Navbar from "./Navbar";
 import styles from "../../styles/styles";
 import { CgProfile } from "react-icons/cg";
 import { useSelector } from "react-redux";
-import { backend_url } from "../../../server";
 import Wishlist from "../Wishlist/Wishlist";
 //import Cart from "../cart/Cart";
 import { RxCross1 } from "react-icons/rx";
-import Cart from "../Cart/Cart";
+import Cart from "../cart/Cart";
+//import Cart from "../Cart/Cart";
 
 const Header = ({ activeHeading }) => {
   const { isAuthenticated, user } = useSelector((state) => state.user);
@@ -114,8 +114,8 @@ const {wishlist} = useSelector((state) =>state.wishlist)
                       >
                         <img
                           src={
-                            item?.images?.[0]
-                              ? `${backend_url}/${item.images[0]}`
+                            item?.images[0]
+                              ? `${item.images[0]}`
                               : "/placeholder.png"
                           }
                           alt={item.name}
@@ -199,7 +199,7 @@ const {wishlist} = useSelector((state) =>state.wishlist)
                         className="rounded-full w-[35px] h-[35px]"
                         src={
                           user?.avatar
-                            ? `${backend_url}/${user.avatar
+                            ? `${user.avatar
                                 .replace(/\\/g, "/")
                                 .replace(/^uploads\//, "")}`
                             : "/placeholder.png"
@@ -284,7 +284,7 @@ const {wishlist} = useSelector((state) =>state.wishlist)
                             <img
                               src={
                                 item?.images?.[0]
-                                  ? `${backend_url}/${item.images[0]}`
+                                  ? `${item.images[0]}`
                                   : "/placeholder.png"
                               }
                               alt={item.name}
@@ -315,7 +315,7 @@ const {wishlist} = useSelector((state) =>state.wishlist)
                       <img
                         src={
                           user?.avatar
-                            ? `${backend_url}/${user.avatar
+                            ? `${user.avatar
                                 .replace(/\\/g, "/")
                                 .replace(/^uploads\//, "")}`
                             : "/placeholder.png"

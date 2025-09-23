@@ -9,6 +9,7 @@ const upload = require("../multer");
 const ErrorHandler = require("../utils/ErrorHandler");
 const catchAsyncErrors = require("../middleware/catchAsyncErrors");
 const sendShopToken = require("../utils/shopToken");
+const cloudinary = require("../cloudinary");
 
 const router = express.Router();
 
@@ -19,23 +20,34 @@ router.post("/create-shop", upload.single("file"), async (req, res, next) => {
 
     // Check if email exists
     const existingSeller = await Shop.findOne({ email });
-    if (existingSeller) {
-      if (req.file?.filename) {
-        const filePath = path.join(__dirname, "..", "uploads", req.file.filename);
-        if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-      }
-      return next(new ErrorHandler("User already exists", 400));
-    }
+    if (existingSeller) return next(new ErrorHandler("User already exists", 400));
 
-    // Prepare file URL
-    const filename = req.file?.filename || "";
-    const fileUrl = filename ? path.join("uploads", filename) : "";
+    let avatarUrl = "";
+
+    // Upload to Cloudinary if file exists
+    if (req.file) {
+      try {
+        avatarUrl = await new Promise((resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream(
+            { folder: "shop_avatars" },
+            (error, result) => {
+              if (error) reject(error);
+              else resolve(result.secure_url);
+            }
+          );
+          stream.end(req.file.buffer);
+        });
+      } catch (cloudError) {
+        console.error("Cloudinary upload failed:", cloudError);
+        return next(new ErrorHandler("Avatar upload failed", 500));
+      }
+    }
 
     const sellerData = {
       name: req.body.name,
       email,
       password: req.body.password,
-      avatar: fileUrl,
+      avatar: avatarUrl, // Save Cloudinary URL
       address: req.body.address,
       phoneNumber: req.body.phoneNumber,
       zipCode: req.body.zipCode,
@@ -44,7 +56,7 @@ router.post("/create-shop", upload.single("file"), async (req, res, next) => {
     // Create activation token
     const activationToken = createActivationToken(sellerData);
 
-    // Activation URL (token passed as path param)
+    // Activation URL
     const activationUrl = `http://localhost:5173/seller/activation/${activationToken}`;
 
     // Send activation email
@@ -57,12 +69,14 @@ router.post("/create-shop", upload.single("file"), async (req, res, next) => {
     res.status(201).json({
       success: true,
       message: `Please check your email (${sellerData.email}) to activate your shop!`,
+      avatar: avatarUrl,
     });
   } catch (error) {
     console.error("Create shop error:", error);
     return next(new ErrorHandler(error.message || "Internal Server Error", 500));
   }
 });
+
 
 // Create Activation Token
 const createActivationToken = (seller) => {
@@ -180,17 +194,25 @@ router.get("/logout", catchAsyncErrors(async (req, res, next) => {
 
 //get shop info
 
-router.get("/get-shop-info/:id", catchAsyncErrors(async (req,res,next) =>{
+router.get("/get-shop-info/:id", catchAsyncErrors(async (req, res, next) => {
   try {
-    const shop = await Shop.findById(req.params.id);
-    res.status(200).json({
-      success: true,
-      shop,
-    })
+    const { id } = req.params;
+
+    if (!id || id === "null" || id === "undefined") {
+      return res.status(400).json({ success: false, message: "Invalid shop ID" });
+    }
+
+    const shop = await Shop.findById(id);
+    if (!shop) {
+      return res.status(404).json({ success: false, message: "Shop not found" });
+    }
+
+    res.status(200).json({ success: true, shop });
   } catch (error) {
-    return next( new ErrorHandler(error.message, 500))
+    return next(new ErrorHandler(error.message, 500));
   }
-}))
+}));
+
 
 //update shop profile pic 
 router.put(

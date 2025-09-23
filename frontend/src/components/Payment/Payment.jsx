@@ -41,11 +41,9 @@ const paymentHandler = async (e) => {
     }
 
     try {
-      console.log("Creating PaymentIntent on backend...");
+      
 
       const amountInCents = Math.round(orderData.totalPrice * 100);
-      console.log("Amount in cents:", amountInCents);
-
       const { data } = await axios.post(
         `${server}/payment/process`,
         { amount: amountInCents },
@@ -54,12 +52,8 @@ const paymentHandler = async (e) => {
 
       const clientSecret = data.clientSecret;
       if (!clientSecret) {
-        console.error("No clientSecret received from backend!");
         return;
       }
-
-      console.log("Confirming payment with Stripe...");
-
       const cardElement = elements.getElement(CardNumberElement);
 
       const result = await stripe.confirmCardPayment(clientSecret, {

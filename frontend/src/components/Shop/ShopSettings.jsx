@@ -1,11 +1,9 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AiOutlineCamera } from "react-icons/ai";
-import styles from "../../styles/styles";
 import axios from "axios";
 import { loadSeller } from "../../redux/actions/user";
 import { toast } from "react-toastify";
-import { backend_url, server } from "../../../server";
 
 const ShopSettings = () => {
   const { seller } = useSelector((state) => state.seller);
@@ -66,7 +64,7 @@ const ShopSettings = () => {
         <div className="flex justify-center mb-6">
           <div className="relative">
             <img
-              src={avatar || `${backend_url}/${seller?.avatar}`}
+              src={avatar || `${seller?.avatar}`}
               alt="Shop Avatar"
               className="w-[150px] h-[150px] rounded-full object-cover"
             />
