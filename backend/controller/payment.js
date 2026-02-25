@@ -3,13 +3,20 @@ const router = express.Router();
 const catchAsyncErrors = require("../middleware/catchAsyncErrors");
 const Stripe = require("stripe");
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+// Initialize Stripe inside handlers to avoid crashing when env is missing in serverless
 
 
 router.post(
   "/process",
   catchAsyncErrors(async (req, res, next) => {
     try {
+      const secretKey = process.env.STRIPE_SECRET_KEY;
+      if (!secretKey) {
+        return res
+          .status(500)
+          .json({ success: false, error: "Missing STRIPE_SECRET_KEY" });
+      }
+      const stripe = new Stripe(secretKey);
       const { amount } = req.body;
 
       // ✅ Create PaymentIntent
