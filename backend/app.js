@@ -11,10 +11,19 @@ const cors = require("cors");
 app.use(cookieParser());
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
-app.use(cors({
-    origin: ["http://localhost:5173", "https://mv92.netlify.app"],
+const allowlist = new Set(["http://localhost:5173", "https://mv92.netlify.app"]);
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowlist.has(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
-}));
+  })
+);
 app.use("/", express.static("uploads"));
 app.use(bodyParser.urlencoded({extended:true}));
 
