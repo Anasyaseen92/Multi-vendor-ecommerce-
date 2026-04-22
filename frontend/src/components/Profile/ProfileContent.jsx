@@ -20,23 +20,24 @@ import axios from "axios";
 import { RxCross1 } from "react-icons/rx";
 import { Country, State, City } from "country-state-city";
 import { getAllOrdersOfUser } from "../../redux/actions/order";
+import {  server } from "../../../server";
 function ProfileContent({ active, setActive }) {
   const { user, error, successMessage } = useSelector((state) => state.user);
   const [name, setName] = useState(user && user.name);
-  const [avatar, setAvatar] = useState(null);
+
   const [email, setEmail] = useState(user && user.email);
   const [phoneNumber, setPhoneNumber] = useState(user && user?.phoneNumber);
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
   useEffect(() => {
     if (error) {
-      toast.error(error);
+      toast.error(typeof error === 'object' ? error.message || 'An error occurred' : error);
       dispatch({ type: "clearErrors" });
     }
     if (successMessage) {
       dispatch({ type: "clearErrors" });
     }
-  }, [error, successMessage]);
+  }, [error, successMessage, dispatch]);
   const handleSubmit = (e) => {
     e.preventDefault();
     dispatch(updateUserInfomation(name, email, phoneNumber, password));
@@ -79,7 +80,7 @@ function ProfileContent({ active, setActive }) {
             <div className="relative">
               <img
                 className="rounded-full w-[150px] h-[150px] object-cover border-[3px] border-blue-700"
-                src={`${user?.avatar}`}
+                src={user?.avatar ? `${user.avatar.replace(/\\/g, "/").replace(/^uploads\//, "")}` : "/default-avatar.png"}
                 alt=""
               />
               <div className="w-[30px] h-[30px] bg-white rounded-full flex items-center justify-center cursor-pointer absolute bottom-[5px] right-[5px]">
@@ -474,21 +475,19 @@ const ChangePassword = () => {
   const passwordChangeHandler = async (e) => {
     e.preventDefault();
 
-    await axios
-      .put(
+    try {
+      await axios.put(
         `${server}/user/update-user-password`,
         { oldPassword, newPassword, confirmPassword },
         { withCredentials: true }
-      )
-      .then((res) => {
-        toast.success("Change Successfully");
-        setOldPassword("");
-        setNewPassword("");
-        setConfirmPassword("");
-      })
-      .catch((error) => {
-        toast.error(error.response.data.message);
-      });
+      );
+      toast.success("Change Successfully");
+      setOldPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
   };
   return (
     <div className="w-full px-4 sm:px-6 md:px-8">

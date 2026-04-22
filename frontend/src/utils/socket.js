@@ -1,8 +1,8 @@
-// frontend/src/utils/socket.js
-import { io } from "socket.io-client";
-
-const ENDPOINT ="http://localhost:4000";
-
-export const socket = io(ENDPOINT, {
-  transports: ["websocket"],
-});
+// Socket.IO disabled: export no-op socket to avoid connection attempts
+export const socket = {
+  on() {},
+  emit() {},
+  off() {},
+  connect() {},
+  disconnect() {},
+};
